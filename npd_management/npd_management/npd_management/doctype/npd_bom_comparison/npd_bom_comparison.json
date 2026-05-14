@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "creation": "2026-05-13 19:20:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "base_bom",
+  "compare_bom",
+  "column_break0",
+  "cost_variance",
+  "note",
+  "section_break_delta",
+  "comparison_html"
+ ],
+ "fields": [
+  {
+   "fieldname": "base_bom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Base BOM (Experimental R&D / Target)",
+   "options": "BOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "compare_bom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Compare BOM (Standard Baseline)",
+   "options": "BOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break0",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "cost_variance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Net Cost Variance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Audit Annotations"
+  },
+  {
+   "fieldname": "section_break_delta",
+   "fieldtype": "Section Break",
+   "label": "Structural Delta Matrix"
+  },
+  {
+   "fieldname": "comparison_html",
+   "fieldtype": "HTML",
+   "label": "Delta Grid"
+  }
+ ],
+ "issingle": 0,
+ "istable": 0,
+ "links": [],
+ "module": "npd_management",
+ "name": "NPD BOM Comparison",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "base_bom"
+}

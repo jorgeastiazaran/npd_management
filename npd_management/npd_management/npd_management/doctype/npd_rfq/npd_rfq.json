@@ -1,0 +1,173 @@
+{
+ "name": "NPD RFQ",
+ "doctype": "DocType",
+ "module": "npd_management",
+ "custom": 0,
+ "autoname": "naming_series:",
+ "title_field": "subject",
+ "is_submittable": 1,
+ "track_changes": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "NPD-RFQ-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "transaction_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "schedule_date",
+   "fieldtype": "Date",
+   "label": "Required Date"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject"
+  },
+  {
+   "fieldname": "suppliers_section",
+   "fieldtype": "Section Break",
+   "label": "Suppliers"
+  },
+  {
+   "fieldname": "suppliers",
+   "fieldtype": "Table",
+   "label": "Suppliers",
+   "options": "NPD RFQ Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items",
+   "options": "fa fa-shopping-cart"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "NPD RFQ Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier_response_section",
+   "fieldtype": "Section Break",
+   "label": "Email Details"
+  },
+  {
+   "fieldname": "email_template",
+   "fieldtype": "Link",
+   "label": "Email Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "message_for_supplier",
+   "fieldtype": "Text Editor",
+   "label": "Message for Supplier"
+  },
+  {
+   "fieldname": "terms_section_break",
+   "fieldtype": "Section Break",
+   "label": "Terms and Conditions",
+   "options": "fa fa-legal"
+  },
+  {
+   "fieldname": "tc_name",
+   "fieldtype": "Link",
+   "label": "Terms",
+   "options": "Terms and Conditions"
+  },
+  {
+   "fieldname": "terms",
+   "fieldtype": "Text Editor",
+   "label": "Terms and Conditions"
+  },
+  {
+   "fieldname": "printing_settings",
+   "fieldtype": "Section Break",
+   "label": "Printing Settings"
+  },
+  {
+   "fieldname": "select_print_heading",
+   "fieldtype": "Link",
+   "label": "Print Heading",
+   "options": "Print Heading"
+  },
+  {
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
+  },
+  {
+   "fieldname": "more_info",
+   "fieldtype": "Section Break",
+   "label": "More Information",
+   "options": "fa fa-file-text"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nDraft\nSubmitted\nCancelled",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "col_break_more",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "label": "Opportunity",
+   "options": "Opportunity"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "NPD RFQ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "salutation",
+   "fieldtype": "Link",
+   "label": "Salutation",
+   "options": "Salutation"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  }
+ ]
+}

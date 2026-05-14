@@ -1,0 +1,203 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-05-13 19:15:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "quotation_to",
+  "party_name",
+  "customer_name",
+  "lead_name",
+  "column_break0",
+  "transaction_date",
+  "valid_till",
+  "currency",
+  "company",
+  "section_break_items",
+  "items",
+  "section_break_totals",
+  "total",
+  "total_estimated_cost",
+  "column_break_totals",
+  "overall_gross_margin",
+  "section_break_status",
+  "status",
+  "is_promoted",
+  "column_break_status",
+  "promoted_quotation"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "NPD-QTN-.YYYY.-",
+   "reqd": 1
+  },
+  {
+   "default": "Customer",
+   "fieldname": "quotation_to",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Quotation To",
+   "options": "Customer\nLead",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Party",
+   "options": "quotation_to",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.quotation_to=='Customer'",
+   "fetch_from": "party_name.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.quotation_to=='Lead'",
+   "fetch_from": "party_name.lead_name",
+   "fieldname": "lead_name",
+   "fieldtype": "Data",
+   "label": "Lead Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break0",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "transaction_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "valid_till",
+   "fieldtype": "Date",
+   "label": "Valid Till"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Experimental Formulations"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "NPD Quotation Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_totals",
+   "fieldtype": "Section Break",
+   "label": "Financial Summary"
+  },
+  {
+   "default": "0",
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_estimated_cost",
+   "fieldtype": "Currency",
+   "label": "Total Estimated Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "overall_gross_margin",
+   "fieldtype": "Percent",
+   "label": "Overall Gross Margin (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Lifecycle Tracking"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nApproved\nPromoted",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_promoted",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Promoted",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "promoted_quotation",
+   "fieldtype": "Link",
+   "label": "Promoted Sales Quotation",
+   "options": "Quotation",
+   "read_only": 1
+  }
+ ],
+ "issingle": 0,
+ "istable": 0,
+ "links": [],
+ "module": "npd_management",
+ "name": "NPD Quotation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "party_name"
+}

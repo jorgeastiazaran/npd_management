@@ -1,0 +1,32 @@
+# Local environment configurations
+.env
+
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Virtual environments & IDE configurations
+venv/
+env/
+.idea/
+.vscode/
+*.egg-info/
+dist/
+build/
+
+# Internal R&D Sandbox testing files (kept local-only)
+internal_testing/
+
+# Developer scratchpads, working logs, and offline database snapshot dumps
+internal_notes/
+project_docs/

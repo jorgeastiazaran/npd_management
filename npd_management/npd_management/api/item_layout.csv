@@ -1,0 +1,242 @@
+row,label,fieldtype,fieldname,non_negative,reqd,unique,in_list_view,in_standard_filter,in_global_search,in_preview,bold,no_copy,allow_in_quick_entry,translatable,default,precision,length,options,fetch_from,fetch_if_empty,depends_on,permlevel,hidden,read_only,collapsible,allow_bulk_edit,collapsible_depends_on,ignore_user_permissions,allow_on_submit,report_hide,remember_last_selected_value,hide_border,ignore_xss_filter,mandatory_depends_on,read_only_depends_on,in_filter,hide_seconds,hide_days,description,print_hide,print_hide_if_no_value,print_width,columns,width,is_custom_field
+1,Hub Sync ID,Data,hub_sync_id,,,,,,,,,,,1,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,1
+2,woocommerce_check,Check,woocommerce_check,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+3,woocommerce_id,Data,woocommerce_id,,,,,,,,,,,1,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+4,variation_id,Data,variation_id,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+5,tiktok_id,Data,tiktok_id,,,,,,,,,,,1,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+6,,Section Break,name_and_description_section,,,,,,,,,,,,,,,fa fa-flag,,,,,,,,,,,,,,,,,,,,,,,,,,,
+7,Series,Select,naming_series,,1,,,,,,,,,,,,,"SE-.####
+P-.####
+PACK-.####
+I-.####
+S-.####
+E-.####
+MP-.####
+ACT-.####
+MERCH-.####
+RR-.####
+REP-.####",,,,,,,,,,,,,,,,,,,,,,,,,,,
+8,Item Code,Data,item_code,,,1,,1,1,,1,,,,,,,,,,,,1,1,,,,,,,,,,,,,,,,,,,,,
+9,Sync Quantity With Shopify,Check,sync_qty_with_shopify,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+10,Variant Of,Link,variant_of,,,,,,,,,,,,,,,Item,,,variant_of,,,1,,,,1,,,,,,,,,,,"If item is a variant of another item then description, image, pricing, taxes etc will be set from the template unless explicitly specified",,,,,282,
+11,Item Name,Data,item_name,,,,,1,1,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,346,
+12,Item Group,Link,item_group,,1,,1,1,,1,,,,,,,,Item Group,,,,,,,,,,,,,,,,,,,,,,,,,,,
+13,HSN/SAC,Link,gst_hsn_code,,,,,,,,,,,,,,,GST HSN Code,,,,,,,,,,1,,,,,,,,,,,,,,,,,1
+14,Amazon ASIN,Data,amazon_asin,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+15,Is Item from Hub,Check,is_item_from_hub,,,,,,,,,,,,0,,,,,,eval:!doc.is_fixed_asset,,1,1,,,,,,,,,,,,,,,,,,,,,
+16,Unidad de Medida,Link,stock_uom,,1,,,,,,,,,,"""""",,,UOM,,,,,,,,,,1,,,,,,,,,,,,,,,,,
+17,Stock Keeping Unit,Data,stock_keeping_unit,,,,,,,,,1,,1,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,1
+18,Clave de Producto,Data,clave_de_producto,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+19,,Column Break,column_break0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+20,Disabled,Check,disabled,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+21,Allow Alternative Item,Check,allow_alternative_item,,,,,,,,,,,,0,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,
+22,Es Inventariable,Check,is_stock_item,,,,,,,,1,,,,0,,,,,,eval:!doc.is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+23,Sync With Shopify,Check,sync_with_shopify,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+24,Include Item In Manufacturing,Check,include_item_in_manufacturing,,,,,,,,,,,,1,,,,,,eval:!doc.is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+25,Stock de Apertura,Float,opening_stock,,,,,,,,1,,,,,,,,,,eval:(doc.__islocal&&doc.is_stock_item && !doc.has_serial_no && !doc.has_batch_no),,1,,,,,,,,,,,,,,,,,,,,,,
+26,Valuation Rate,Currency,valuation_rate,,,,,,,,,,,,,,,,,,is_stock_item,,,,,,,,,,,,,,,,,,,,,,,,
+27,Standard Selling Rate,Currency,standard_rate,,,,,,,,1,,,,,,,,,,eval:doc.__islocal,,,,,,,,,,,,,,,,,,,,,,,,
+28,Is Fixed Asset,Check,is_fixed_asset,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+29,Auto Create Assets on Purchase,Check,auto_create_assets,,,,,,,,,,,,0,,,,,,is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+30,Asset Category,Link,asset_category,,,,,,,,,,,,,,,Asset Category,,,is_fixed_asset,,,,,,,,,,,,,is_fixed_asset,,,,,,,,,,,
+31,Asset Naming Series,Select,asset_naming_series,,,,,,,,,,,,,,,,,,is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+32,Over Delivery/Receipt Allowance (%),Float,over_delivery_receipt_allowance,,,,,,,,,,,,,,,,,,eval:!doc.__islocal && !doc.is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+33,Over Billing Allowance (%),Float,over_billing_allowance,,,,,,,,,,,,,,,,,,eval:!doc.__islocal && !doc.is_fixed_asset,,,,,,,,,,,,,,,,,,,,,,,,
+34,Image,Attach Image,image,,,,,,,1,,,,,,,,image,,,,,,,,,,,,,,,,,,,,,,1,,,,,
+35,Description,Section Break,section_break_11,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,
+36,Brand,Link,brand,,,,,,,,,,,,,,,Brand,,,,,,,,,,,,,,,,,,,,,,1,,,,,
+37,Description,Text Editor,description,,,,,1,,1,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+38,Shopify Description,Text Editor,shopify_description,,,,,,,,,,,1,,,,,,,,,1,1,,,,,,1,,,,,,,,,,1,,,,,1
+39,Barcodes,Section Break,sb_barcodes,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,
+40,Barcodes,Table,barcodes,,,,,,,,,,,,,,,Item Barcode,,,,,,,,,,,,,,,,,,,,,,,,,,,
+41,Inventory,Section Break,inventory_section,,,,,,,,,,,,,,,fa fa-truck,,,is_stock_item,,,,1,,is_stock_item,,,,,,,,,,,,,,,,,,
+42,Shelf Life In Days,Int,shelf_life_in_days,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,eval:doc.has_batch_no && doc.has_expiry_date,,,,,,,,,,,
+43,End of Life,Date,end_of_life,,,,,,,,,,,,31/12/99,,,,,,is_stock_item,,,,,,,,,,,,,,,,,,,,,,,,
+44,Default Material Request Type,Select,default_material_request_type,,,,,,,,,,,,Purchase,,,"Purchase
+Material Transfer
+Material Issue
+Manufacture
+Customer Provided",,,,,,,,,,,,,,,,,,,,,,,,,,,
+45,Valuation Method,Select,valuation_method,,,,,,,,,,,,,,,FIFO,,,is_stock_item,,,1,,,,,1,,,,,,,,,,,,,,,,
+46,,Column Break,column_break1,,,,,,,,,,,,,,,,,,is_stock_item,,,,,,,,,,,,,,,,,,,,,,,50%,
+47,Warranty Period (in days),Data,warranty_period,,,,,,,,,,,,,,,,,,eval:doc.is_stock_item,,,,,,,,,,,,,,,,,,,,,,,,
+48,Weight Per Unit,Float,weight_per_unit,,,,,,,,,,,,,,,,,,is_stock_item,,,,,,,,,,,,,,,,,,Item Weight,,,,,,
+49,Weight UOM,Link,weight_uom,,,,,,,,,,,,kg,,,UOM,,,eval:doc.is_stock_item,,,,,,,1,,,,,,,,,,,Item Weight UOM,,,,,,
+50,Logistics,Section Break,logistics,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,1
+51,HS Code,Int,hs_code,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+52,Net Content,Float,net_content,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+53,Net Content UOM,Link,net_content_uom,,,,,,,,,,,,,,,UOM,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+54,Barcode,Data,codigo_de_barras,,,,,,,,,,,1,,,,,product_label.codigo_barras,,,,,,,,,,,,,,,,,,,,Barcode for the item (ie: EAN-13).,,,,,,1
+55,Pack Barcode,Data,pack_barcode,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,The barcode for the identification of distribution boxes or pallets containing products (ie: EAN-14).,,,,,,1
+56,Item Height,Data,item_height,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Height of item in cm.,,,,,,1
+57,Item Width,Data,item_width,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Width of item in cm.,,,,,,1
+58,Item Depth,Data,item_depth,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Depth of item in cm.,,,,,,1
+59,,Column Break,column_break_51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+60,Pack Count,Int,pack_count,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quantity of item pieces contained in the pack.,,,,,,1
+61,Pack Height,Data,pack_height,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Height of pack in cm.,,,,,,1
+62,Pack Width,Data,pack_width,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Width of pack in cm.,,,,,,1
+63,Pack Depth,Data,pack_depth,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,,,,Depth of pack in cm.,,,,,,1
+64,Pack Weight,Float,pack_weight,,,,,,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,in kg,,,,,,1
+65,Pack Weight for Amazon (lb),Data,pack_weight_amazon,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+66,Item Weight (lb),Float,item_weight_lb,,,,,,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+67,,Column Break,column_break_57,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+68,Pallet packs per layer,Int,pallet_packs_per_layer,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quantity of packs per layer on pallet.,,,,,,1
+69,Pallet layers,Int,pallet_layers,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quantity of layers on pallet.,,,,,,1
+70,Packs per pallet,Int,packs_per_pallet,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Quantity of packs on pallet.,,,,,,1
+71,Pallet weight,Float,pallet_weight,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Weight of pallet in weight UOM.,,,,,,1
+72,Pallet height,Float,pallet_height,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,Height of pallet in cm.,,,,,,1
+73,Pallet width,Float,pallet_width,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,Width of pallet in cm.,,,,,,1
+74,Pallet depth,Float,pallet_depth,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,Depth of pallet in cm.,,,,,,1
+75,,Percent,diferencia_ste,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Parámetro de porcentaje para análisis de diferencias en Stock Entries. Default a 3%,,,,,,1
+76,Porcentaje de Diferencia permitida en Stock Entries,Percent,porcentaje_diferencia,,,,,,,,,,,,3,,,,,,,,,,,,,,,,,,,,,,,,Parámetro de porcentaje para análisis de diferencias en Stock Entries,,,,,,1
+77,Auto re-order,Section Break,reorder_section,,,,,,,,,,,,,,,fa fa-rss,,,is_stock_item,,,,1,,,,,,,,,,,,,,,,,,,,
+78,Reorder level based on Warehouse,Table,reorder_levels,,,,,,,,,,,,,,,Item Reorder,,,,,,,,,,,,,,,,,,,,,Will also apply for variants unless overrridden,,,,,,
+79,Units of Measure,Section Break,unit_of_measure_conversion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+80,UOMs,Table,uoms,,,,,,,,,,,,,,,UOM Conversion Detail,,,,,,,,,,,,,,,,,,,,,Will also apply for variants,,,,,,
+81,Serial Nos and Batches,Section Break,serial_nos_and_batches,,,,,,,,,,,,,,,,,,,,,,,,eval:doc.has_batch_no || doc.has_serial_no,,1,,,,,,,,,,,,,,,,
+82,Has Batch No,Check,has_batch_no,,,,,,,,,1,,,0,,,,,,eval:doc.is_stock_item,,,,,,,,1,,,,,,,,,,,,,,,,
+83,Automatically Create New Batch,Check,create_new_batch,,,,,,,,,,,,0,,,,,,has_batch_no,,,,,,,,,,,,,,,,,,,,,,,,
+84,Batch Number Series,Data,batch_number_series,,,,,,,,,,,1,,,,,,,eval:doc.has_batch_no==1 && doc.create_new_batch==1,,,,,,,,,,,,,,,,,,"Example: ABCD.#####. If series is set and Batch No is not mentioned in transactions, then automatic batch number will be created based on this series. If you always want to explicitly mention Batch No for this item, leave this blank. Note: this setting will take priority over the Naming Series Prefix in Stock Settings.",,,,,,
+85,Has Expiry Date,Check,has_expiry_date,,,,,,,,,,,,0,,,,,,has_batch_no,,,,,,,,,,,,,,,,,,,,,,,,
+86,Retain Sample,Check,retain_sample,,,,,,,,,,,,0,,,,,,has_batch_no,,,,,,,,,,,,,,,,,,,,,,,,
+87,Max Sample Quantity,Int,sample_quantity,,,,,,,,,,,,,,,,,,eval: (doc.retain_sample && doc.has_batch_no),,,,,,,,,,,,,,,,,,Maximum sample quantity that can be retained,,,,,,
+88,,Column Break,column_break_37,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+89,Has Serial No,Check,has_serial_no,,,,,,,,,1,,,0,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,
+90,Serial Number Series,Data,serial_no_series,,,,,,,,,,,,,,,,,,has_serial_no,,,,,,,,,,,,,,,,,,"Example: ABCD.#####
+If series is set and Serial No is not mentioned in transactions, then automatic serial number will be created based on this series. If you always want to explicitly mention Serial Nos for this item. leave this blank.",,,,,,
+91,Variants,Section Break,variants_section,,,,,,,,,,,,,,,,,,eval:!doc.is_fixed_asset,,1,,1,,attributes,,,,,,,,,,,,,,,,,,
+92,Has Variants,Check,has_variants,,,,,1,,,,,,,0,,,,,,eval:!doc.variant_of,,,,,,,,,,,,,,,,,,"If this item has variants, then it cannot be selected in sales orders etc.",,,,,,
+93,Variant Based On,Select,variant_based_on,,,,,,,,,,,,Item Attribute,,,"Item Attribute
+Manufacturer",,,has_variants,,,,,,,,,,,,,,,,,,,,,,,,
+94,Attributes,Table,attributes,,,,,,,,,,,,,,,Item Variant Attribute,,,eval:(doc.has_variants || doc.variant_of) && doc.variant_based_on==='Item Attribute',,,,,,,,,,,,,,,,,,,,,,,,
+95,"Sales, Purchase, Accounting Defaults",Section Break,defaults,,,,,,,,,,,,,,,,,,"eval:doc.item_group!=""Fixed Asset""",,,,1,,,,,,,,,,,,,,,,,,,,
+96,Item Defaults,Table,item_defaults,,,,,,,,,,,,,,,Item Default,,,,,,,,,,,,,,,,,,,,,,,,,,,
+97,"Purchase, Replenishment Details",Section Break,purchase_details,,,,,,,,,,,,,,,fa fa-shopping-cart,,,,,,,1,,,,,,,,,,,,,,,,,,,,
+98,Is Purchase Item,Check,is_purchase_item,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+99,Default Purchase Unit of Measure,Link,purchase_uom,,,,,,,,,,,,,,,UOM,,,,,,,,,,,,,,,,,,,,,,,,,,,
+100,Minimum Order Qty,Float,min_order_qty,,,,,,,,,,,,0,,,,,,is_stock_item,,,,,,,,,,,,,,,,,,Minimum quantity should be as per Stock UOM,,,,,,
+101,Safety Stock,Float,safety_stock,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+102,,Column Break,purchase_details_cb,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+103,Lead Time in days,Int,lead_time_days,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Average time taken by the supplier to deliver,,,,,,
+104,Last Purchase Rate,Float,last_purchase_rate,,,,,,,,,1,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,
+105,Is Customer Provided Item,Check,is_customer_provided_item,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+106,Customer,Link,customer,,,,,,,,,,,,,,,Customer,,,eval:doc.is_customer_provided_item==1,,,,,,,,,,,,,,,,,,,,,,,,
+107,Supplier Details,Section Break,supplier_details,,,,,,,,,,,,,,,,,,eval:!doc.is_fixed_asset,,,,1,,,,,,,,,,,,,,,,,,,,
+108,Delivered by Supplier (Drop Ship),Check,delivered_by_supplier,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,1,,,,,
+109,,Column Break,column_break2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,50%,
+110,Supplier Items,Table,supplier_items,,,,,,,,,,,,,,,Item Supplier,,,,,,,,,,,,,,,,,,,,,,,,,,,
+111,Foreign Trade Details,Section Break,foreign_trade_details,,,,,,,,,,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,
+112,Country of Origin,Link,country_of_origin,,,,,,,,,,,,,,,Country,,,,,,,,,,,,,,,,,,,,,,,,,,,
+113,,Column Break,column_break_59,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+114,Customs Tariff Number,Link,customs_tariff_number,,,,,,,,,,,,,,,Customs Tariff Number,,,,,,,,,,,,,,,,,,,,,,,,,,,
+115,Sales Details,Section Break,sales_details,,,,,,,,,,,,,,,fa fa-tag,,,,,,,,,,,,,,,,,,,,,,,,,,,
+116,Default Sales Unit of Measure,Link,sales_uom,,,,,,,,,,,,,,,UOM,,,,,1,,,,,,,,,,,,,,,,,,,,,,
+117,Is Sales Item,Check,is_sales_item,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+118,Reading required,Check,reading_required,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,If the item requires Gas or Electricity or similar meter reading to charge the customer.,,,,,,1
+119,Grant Commission,Check,grant_commission,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+120,,Column Break,column_break3,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,50%,
+121,Max Discount (%),Float,max_discount,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,
+122,Deferred Revenue,Section Break,deferred_revenue,,,,,,,,,,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,
+123,Deferred Revenue Account,Link,deferred_revenue_account,,,,,,,,,,,,,,,Account,,,enable_deferred_revenue,,,,,,,1,,,,,,,,,,,,,,,,,
+124,Enable Deferred Revenue,Check,enable_deferred_revenue,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+125,,Column Break,column_break_85,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+126,No of Months,Int,no_of_months,,,,,,,,,,,,,,,,,,enable_deferred_revenue,,,,,,,,,,,,,,,,,,,,,,,,
+127,Deferred Expense,Section Break,deferred_expense_section,,,,,,,,,,,,,,,,,,,,1,,1,,,,,,,,,,,,,,,,,,,,
+128,Deferred Expense Account,Link,deferred_expense_account,,,,,,,,,,,,,,,Account,,,enable_deferred_expense,,,,,,,1,,,,,,,,,,,,,,,,,
+129,Enable Deferred Expense,Check,enable_deferred_expense,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+130,,Column Break,column_break_88,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+131,No of Months,Int,no_of_months_exp,,,,,,,,,,,,,,,,,,enable_deferred_expense,,,,,,,,,,,,,,,,,,,,,,,,
+132,Customer Details,Section Break,customer_details,,,,,,,,,,,,,,,,,,eval:!doc.is_fixed_asset,,1,,1,,,,,,,,,,,,,,,,,,,,
+133,Customer Items,Table,customer_items,,,,,,,,,,,,,,,Item Customer Detail,,,,,,,,,,,,,,,,,,,,,,,,,,,
+134,Item Tax,Section Break,item_tax_section_break,,,,,,,,,,,,,,,fa fa-money,,,,,,,,,taxes,,,,,,,,,,,,,,,,,,
+135,Taxes,Table,taxes,,,,,,,,,,,,,,,Item Tax,,,,,,,,,,,,,,,,,,,,,Will also apply for variants,,,,,,
+136,Inspection Criteria,Section Break,inspection_criteria,,,,,,,,,,,,,,,fa fa-search,,,eval:!doc.is_fixed_asset,,,,1,,,,,,,,,,,,,,,,,,,,
+137,Quality Inspection Template,Link,quality_inspection_template,,,,,,,,,,,,,,,Quality Inspection Template,,,,,,,,,,,,,,,,,,,,,,1,,,,,
+138,Inspection Required before Purchase,Check,inspection_required_before_purchase,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+139,Inspection Required before Delivery,Check,inspection_required_before_delivery,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+140,Manufacturing,Section Break,manufacturing,,,,,,,,,,,,,,,fa fa-cogs,,,is_stock_item,,1,,1,,is_stock_item,,,,,,,,,,,,,,,,,,
+141,Default BOM,Link,default_bom,,,,,,,,,1,,,,,,BOM,,,,,,1,,,,1,,,,,,,,,,,,,,,,,
+142,Supply Raw Materials for Purchase,Check,is_sub_contracted_item,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,If subcontracted to a vendor,,,,,,
+143,,Column Break,column_break_74,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+144,Customer Code,Data,customer_code,,,,,,,,,1,,,,,,,,,,,1,,,,,,,,,,,,,,,,,1,,,,,
+145,Default Item Manufacturer,Link,default_item_manufacturer,,,,,,,,,,,,,,,Manufacturer,,,,,,1,,,,,,,,,,,,,,,,,,,,,
+146,Default Manufacturer Part No,Data,default_manufacturer_part_no,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,
+147,Nutrition facts,Section Break,nutrition_facts,,,,,,,,,,,,,,,,,,,1,,,1,,,,,,,,,,,,,,,,,,,,1
+148,Product Label,Link,product_label,,,,,,,,,,,,,,,Product Label,,,,,,,,,,,1,,,,,,,,,,,,,,,,1
+149,Serving size,Data,serving_size,,,,,,,,,,,1,,,,,product_label.porcion,,,,,,,,,,,,,,,,,,,,,,,,,,1
+150,Contenido energetico kcal,Int,contenido_energetico_kcal,,,,,,,,,,,,,,,,product_label.nutrimental_energiakcal_100,,,1,,,,,,,,,,,,,,,,,Por porción.,,,,,,1
+151,Contenido energetico kJ,Int,contenido_energetico_kj,,,,,,,,,,,,,,,,product_label.nutrimental_energiakj_100,,,1,,,,,,,,,,,,,,,,,Por porción.,,,,,,1
+152,Contenido energetico por envase kcal ,Int,contenido_energetico_por_envase_kcal_,,,,,,,,,,,,,,,,product_label.nutrimental_energiakcal_envase,,,1,,,,,,,,,,,,,,,,,Por envase.,,,,,,1
+153,Contenido energetico por envase kJ,Int,contenido_energetico_por_envase_kj,,,,,,,,,,,,,,,,product_label.nutrimental_energiakj_envase,,,1,,,,,,,,,,,,,,,,,Por envase.,,,,,,1
+154,Proteinas g,Float,proteinas_g,,,,,,,,,,,,,1,,,product_label.nutrimental_proteina,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+155,Grasas g,Float,grasas_g,,,,,,,,,,,,,1,,,product_label.nutrimental_grasas_tot,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+156,Grasas saturadas g,Float,grasas_saturadas_g,,,,,,,,,,,,,1,,,product_label.nutrimental_grasas_sat,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+157,Grasas Trans g,Float,grasas_trans_g,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+158,Colesterol mg,Float,colesterol_mg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+159,Carbohidratos g,Float,carbohidratos_g,,,,,,,,,,,,,1,,,product_label.nutrimental_carbohidratos_disponibles,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+160,Azúcares g,Float,azucares_g,,,,,,,,,,,,,1,,,product_label.nutrimental_azucares,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+161,Azúcares Añadidos g,Data,azucares_anadidos_g,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+162,Fibra dietetica g,Float,fibra_dietetica_g,,,,,,,,,,,,,1,,,product_label.nutrimental_fibra,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+163,Sodio mg,Float,sodio_mg,,,,,,,,,,,,,1,,,product_label.nutrimental_sodio,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+164,Vit D ug,Float,vit_d_ug,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+165,Calcio mg,Float,calcio_mg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+166,Hierro mg,Float,hierro_mg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+167,Potasio mg,Float,potasio_mg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+168,,Column Break,column_break_130,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+169,Contenido neto,Data,contenido_neto,,,,,,,,,,,1,,1,,,product_label.cont_net,,,1,,,,,,,,,,,,,,,,,Indica el contenido neto con los decimales y unidades de medida adecuados para la etiqueta.,,,,,,1
+170,Porciones por envase,Data,porciones_por_envase,,,,,,,,,,,1,,1,,,product_label.porciones_envase,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+171,Nivel de picor,Select,nivel_de_picor,,,,,,,,,,,1,,1,,"0
+1
+2
+3
+4
+5",product_label.nivel_picor,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+172,Ingredientes,Small Text,ingredientes,,,,,,,,,,,1,,,,,product_label.lista_ingredientes,,,1,,,,,,,1,,,,,,,,,,,,,,,,1
+173,Alergenos,Small Text,alergenos,,,,,,,,,,,1,,,,,product_label.alergenos,,,1,,,,,,,,,,,,,,,,,,,,,,,1
+174,Exceso Energia,Check,exceso_energia,,,,,,,,,,,,,,,,product_label.sellos_calorias,,,1,,,,,,,,,,,,,,,,,≥ 70 kcal totales o ≥ 8 kcal de azúcares libres,,,,,,1
+175,Exceso Azucares,Check,exceso_azucares,,,,,,,,,,,,,,,,product_label.sellos_azucares,,,1,,,,,,,,,,,,,,,,,"≥ 10 % del total de energía proveniente e
+azúcares libres.",,,,,,1
+176,Exceso Grasas Saturadas,Check,exceso_grasas_saturadas,,,,,,,,,,,,,,,,product_label.sellos_grasassat,,,1,,,,,,,,,,,,,,,,,"≥ 1 % del total de energía proveniente
+de grasas trans.",,,,,,1
+177,Exceso Sodio,Check,exceso_sodio,,,,,,,,,,,,,,,,product_label.sellos_sodio,,,1,,,,,,,,,,,,,,,,,≥ 1 mg de sodio por kcal o ≥ 300 mg ,,,,,,1
+178,Hub Publishing Details,Section Break,hub_publishing_sb,,,,,,,,,,,,,,,,,,eval:(!doc.is_item_from_hub && !doc.is_fixed_asset),,1,,1,,,,,,,,,,,,,,,,,,,,
+179,Publish in Hub,Check,publish_in_hub,,,,,,,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,,Publish Item to hub.erpnext.com,,,,,,
+180,Hub Category to Publish,Data,hub_category_to_publish,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,
+181,Hub Warehouse,Link,hub_warehouse,,,,,,,,,,,,,,,Warehouse,,,,,,,,,,1,,,,,,,,,,,"Publish ""In Stock"" or ""Not in Stock"" on Hub based on stock available in this warehouse.",,,,,,
+182,Synced With Hub,Check,synced_with_hub,,,,,,,,,,,,0,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,
+183,CFDI,Section Break,cfdi,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,1
+184,Clave Producto (catalogo SAT),Link,clave_producto,,,,,,,,,,,,1010101,,,CFDI Clave Producto,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+185,Clave Unidad  (catalogo SAT),Link,clave_unidad,,,,,,,,,,,,H87,,,CFDI Clave Unidad,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+186,Tasa de Impuesto,Int,tasa,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Utilice numeros enteros. Ej. 16 para una tasa del 16%. 8 para tasa de 8%.,,,,,,1
+187,Tipo de Impuesto,Select,tipo_de_impuesto,,,,,,,,,,,,,,,"IVA
+IEPS
+EXENTO
+ISR",,,,,1,,,,,,,,,,,,,,,,,,,,,,1
+188,Shopify Variant Id,Data,shopify_variant_id,,,,,,,,,1,,,,,,,,,,,1,1,,,,,,,,,,,,,,,,1,,,,,1
+189,Shopify Product Id,Data,shopify_product_id,,,,,,,,,1,,1,,,,,,,,,1,1,,,,,,,,,,,,,,,,1,,,,,1
+190,,Column Break,column_break_145,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+191,No Identificacion,Data,noidentificacion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+192,Objeto Impuesto,Link,objeto_impuesto,,,,,,,,,,,,2,,,CFDI Objeto Impuesto,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+193,More Information,Section Break,more_information_section,,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,
+194,Published in Website,Check,published_in_website,,,,,,,,,,,,0,,,,,,published_in_website,,,1,,,,,,,,,,,,,,,,,,,,,
+195,Total Projected Qty,Float,total_projected_qty,,,,,,,,,,,,,,,,,,,,,1,,,,,,,,,,,,,,,,1,,,,,
+196,Commercial Information,Section Break,commercial_information,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+197,UPC,Int,upc,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Código numérico único que identifica al producto (sin ceros ni dígito verificador) ejemplo: 73502931190,,,,,,1
+198,Descripción comercial del producto,Small Text,descripcion_comercial,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Indicar las características detalladas del producto,,,,,,1
+199,Alt Image 1,Attach Image,alt_image_1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+200,Alt Image 2,Attach Image,alt_image_2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+201,Alt Image 3,Attach Image,alt_image_3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+202,Alt Image 4,Attach Image,alt_image_4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+203,,Column Break,column_break_147,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+204,Commercial Attributes 1,Small Text,commercial_attributes_1,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+205,Commercial Attributes 2,Small Text,commercial_attributes_2,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+206,Commercial Attributes 3,Small Text,commercial_attributes_3,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+207,Commercial Attributes 4,Small Text,commercial_attributes_4,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+208,Commercial Attributes 5,Small Text,commercial_attributes_5,,,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+209,COMERCIO EXTERIOR,Section Break,sb_comercio_exterior,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+210,Fraccion Arancelaria,Link,fraccion_arancelaria,,,,,,,,,,,,,,,CFDI Fraccion Arancelaria,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+211,Unidad Aduana,Link,unidad_aduana,,,,,,,,,,,,,,,CFDI Unidad Aduana,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+212,Descripción de Fracción Arancelaria,Data,descripcion_fraccion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+213,,Column Break,column_break_206,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+214,Codigo HTS,Link,codigo_hts,,,,,,,,,,,,,,,Codigo HTS,,,,,,,,,,,,,,,,,,,,,,,,,,,1
+215,Descripcion HTS,Data,descripcion_hts,,,,,,,,,,,,,,,,codigo_hts.descripcion,1,,,,,,,,,,,,,,,,,,,,,,,,,1
