@@ -162,116 +162,86 @@ def compile_from_csv(doctype_name, csv_path, new_name):
     return skeleton
 
 def get_doctype_schema(doctype_name):
-    """Fetches the base DocType schema, Custom Fields, and Property Setters to compile a unified meta layout."""
+    """Fetches the fully pre-adjudicated compiled DocType schema directly via Frappe's client UI form-loading RPC endpoint."""
     if not ERPNEXT_URL:
         return None
         
-    print(f"Fetching {doctype_name} base schema & customization overlays from {ERPNEXT_URL}...")
+    print(f"Fetching {doctype_name} compiled visual layout metadata from {ERPNEXT_URL}...")
     headers = {
         "Authorization": f"token {API_KEY}:{API_SECRET}",
         "Accept": "application/json"
     }
     
-    # 1. Fetch Base DocType
-    url = f"{ERPNEXT_URL}/api/resource/DocType/{doctype_name}"
-    response = requests.get(url, headers=headers)
+    # Target single pre-adjudicated form meta endpoint directly
+    url = f"{ERPNEXT_URL}/api/method/frappe.desk.form.load.getdoctype"
+    params = {"doctype": doctype_name}
+    
+    response = requests.get(url, headers=headers, params=params)
     
     if response.status_code != 200:
-        print(f"Failed to fetch base {doctype_name}. Status Code: {response.status_code}")
+        print(f"Failed to fetch compiled {doctype_name} meta. Status Code: {response.status_code}")
         return None
         
-    schema_data = response.json().get("data", {})
-    fields = schema_data.get("fields", [])
+    payload = response.json().get("message", {})
+    docs = payload.get("docs", [])
     
-    # 2. Fetch Custom Fields Overlay
-    cf_url = f"{ERPNEXT_URL}/api/resource/Custom Field"
-    cf_params = {
-        "filters": json.dumps([["dt", "=", doctype_name]]),
-        "fields": json.dumps(["*"]),
-        "limit_page_length": 1000
-    }
-    cf_response = requests.get(cf_url, headers=headers, params=cf_params)
-    if cf_response.status_code == 200:
-        custom_fields = cf_response.json().get("data", [])
-        if custom_fields:
-            print(f"  Merged {len(custom_fields)} active Custom Fields into layout.")
-            for cf in custom_fields:
-                # Filter out explicitly deactivated custom fields
-                if cf.get("hidden") == 1:
-                    continue
+    if not docs:
+        print(f"Payload docs array empty for {doctype_name}. Verify target API endpoint permissions.")
+        return None
+        
+    # The primary compiled DocType dict is returned first in the docs array
+    schema_data = docs[0]
+    raw_fields = schema_data.get("fields", [])
+    
+    print(f"  Successfully extracted {len(raw_fields)} compiled layout fields contiguously.")
+    
+    system_fields = {"name", "owner", "creation", "modified", "modified_by", "docstatus", "_user_tags", "_comments", "_assign", "_liked_by", "parent", "parenttype", "parentfield", "lft", "rgt", "old_parent"}
+    
+    cleaned_fields = []
+    seen_fn = set()
+    
+    for f in raw_fields:
+        fn = f.get("fieldname")
+        if not fn or f.get("hidden") == 1 and not f.get("is_custom_field"):
+            # Retain custom hidden fields to uphold data dependencies, but prune unlisted core hidden fields
+            pass
+            
+        # Strip framework internal tracking keys contiguously
+        clean_f = {k: v for k, v in f.items() if k not in system_fields}
+        
+        # Ensure fieldname uniqueness to bypass layout collisions
+        if fn in seen_fn:
+            continue
+        if fn:
+            seen_fn.add(fn)
+            
+        # Secure boolean/integer toggle metrics contiguously
+        for prop in ["reqd", "unique", "read_only", "hidden", "in_list_view", "bold", "allow_in_quick_entry", "print_hide", "report_hide"]:
+            if prop in clean_f:
+                try:
+                    clean_f[prop] = int(clean_f[prop])
+                except (ValueError, TypeError):
+                    clean_f[prop] = 0
                     
-                # Filter out raw internal system metadata keys
-                new_field = {k: v for k, v in cf.items() if k not in ["name", "dt", "owner", "creation", "modified", "modified_by", "_user_tags", "_comments", "_assign", "_liked_by"]}
-                new_field["is_custom_field"] = 1
-                
-                # Insert based on insert_after topological directive
-                insert_after = cf.get("insert_after")
-                inserted = False
-                if insert_after:
-                    for idx, f in enumerate(fields):
-                        if f.get("fieldname") == insert_after:
-                            fields.insert(idx + 1, new_field)
-                            inserted = True
-                            break
-                if not inserted:
-                    fields.append(new_field)
-                    
-    # 3. Fetch Property Setters Overlay
-    ps_url = f"{ERPNEXT_URL}/api/resource/Property Setter"
-    ps_params = {
-        "filters": json.dumps([["doc_type", "=", doctype_name]]),
-        "fields": json.dumps(["field_name", "property", "value"]),
-        "limit_page_length": 1000
-    }
-    ps_response = requests.get(ps_url, headers=headers, params=ps_params)
-    if ps_response.status_code == 200:
-        property_setters = ps_response.json().get("data", [])
-        if property_setters:
-            print(f"  Applied {len(property_setters)} customized Property Setters overrides.")
-            for ps in property_setters:
-                fname = ps.get("field_name")
-                prop = ps.get("property")
-                val = ps.get("value")
-                
-                # Cast integer toggles safely
-                if prop in ["hidden", "mandatory", "read_only", "allow_in_quick_entry", "bold", "collapsible", "ignore_user_permissions", "in_list_view", "in_standard_filter", "in_global_search", "no_copy", "print_hide", "report_hide"]:
-                    try:
-                        val = int(val)
-                    except (ValueError, TypeError):
-                        pass
-                        
-                if fname:
-                    if prop == "insert_after" and val:
-                        # Dynamically re-order base field position
-                        target_field = None
-                        for idx, f in enumerate(fields):
-                            if f.get("fieldname") == fname:
-                                target_field = fields.pop(idx)
-                                break
-                        if target_field:
-                            inserted = False
-                            for idx, f in enumerate(fields):
-                                if f.get("fieldname") == val:
-                                    fields.insert(idx + 1, target_field)
-                                    inserted = True
-                                    break
-                            if not inserted:
-                                fields.append(target_field)
-                    else:
-                        # Apply override directly to targeted field
-                        for f in fields:
-                            if f.get("fieldname") == fname:
-                                f[prop] = val
-                                break
-                else:
-                    # Apply override to parent DocType directly
-                    schema_data[prop] = val
-                    
-    # Ensure sequential index alignment
-    for idx, f in enumerate(fields):
+        # Extract translatable source blocks directly into nested metadata dictionaries
+        t_block = {}
+        if clean_f.get("label"): t_block["label"] = clean_f["label"]
+        if clean_f.get("description"): t_block["description"] = clean_f["description"]
+        if clean_f.get("options") and clean_f.get("fieldtype") == "Select": t_block["options"] = clean_f["options"]
+        if t_block:
+            clean_f["_t"] = t_block
+            
+        cleaned_fields.append(clean_f)
+        
+    # Ensure rigorous contiguous sequence parity mapping
+    for idx, f in enumerate(cleaned_fields):
         f["idx"] = idx + 1
         
-    schema_data["fields"] = fields
+    # Clean up parent schema doc internals
+    for sys_key in system_fields:
+        schema_data.pop(sys_key, None)
+        
+    schema_data["fields"] = cleaned_fields
     return schema_data
 
 def save_doctype_locally(doctype_name, schema_data, new_name):
