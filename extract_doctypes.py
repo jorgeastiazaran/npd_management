@@ -176,13 +176,19 @@ def get_doctype_schema(doctype_name):
     url = f"{ERPNEXT_URL}/api/method/frappe.desk.form.load.getdoctype"
     params = {"doctype": doctype_name}
     
-    response = requests.get(url, headers=headers, params=params)
-    
-    if response.status_code != 200:
-        print(f"Failed to fetch compiled {doctype_name} meta. Status Code: {response.status_code}")
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=30)
+        if response.status_code != 200:
+            print(f"Failed to fetch compiled {doctype_name} meta. Status Code: {response.status_code}")
+            return None
+        payload = response.json().get("message", {})
+    except requests.exceptions.RequestException as e:
+        print(f"Network error fetching compiled {doctype_name} meta: {e}")
+        return None
+    except json.JSONDecodeError:
+        print(f"Failed to decode JSON response for {doctype_name}.")
         return None
         
-    payload = response.json().get("message", {})
     docs = payload.get("docs", [])
     
     if not docs:
@@ -202,9 +208,9 @@ def get_doctype_schema(doctype_name):
     
     for f in raw_fields:
         fn = f.get("fieldname")
-        if not fn or f.get("hidden") == 1 and not f.get("is_custom_field"):
-            # Retain custom hidden fields to uphold data dependencies, but prune unlisted core hidden fields
-            pass
+        # Ensure missing fieldnames or non-customized unlisted hidden core keys are genuinely bypassed
+        if not fn or (f.get("hidden") == 1 and not f.get("is_custom_field")):
+            continue
             
         # Strip framework internal tracking keys contiguously
         clean_f = {k: v for k, v in f.items() if k not in system_fields}
@@ -212,8 +218,7 @@ def get_doctype_schema(doctype_name):
         # Ensure fieldname uniqueness to bypass layout collisions
         if fn in seen_fn:
             continue
-        if fn:
-            seen_fn.add(fn)
+        seen_fn.add(fn)
             
         # Secure boolean/integer toggle metrics contiguously
         for prop in ["reqd", "unique", "read_only", "hidden", "in_list_view", "bold", "allow_in_quick_entry", "print_hide", "report_hide"]:
@@ -223,13 +228,8 @@ def get_doctype_schema(doctype_name):
                 except (ValueError, TypeError):
                     clean_f[prop] = 0
                     
-        # Extract translatable source blocks directly into nested metadata dictionaries
-        t_block = {}
-        if clean_f.get("label"): t_block["label"] = clean_f["label"]
-        if clean_f.get("description"): t_block["description"] = clean_f["description"]
-        if clean_f.get("options") and clean_f.get("fieldtype") == "Select": t_block["options"] = clean_f["options"]
-        if t_block:
-            clean_f["_t"] = t_block
+        # Avoid non-standard internal structure additions to maintain native compilation schema validity
+        clean_f.pop("_t", None)
             
         cleaned_fields.append(clean_f)
         
