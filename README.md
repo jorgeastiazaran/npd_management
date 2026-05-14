@@ -34,9 +34,9 @@ Because every enterprise customizes their operational master records (`Item`, `B
 We provide a streamlined, automated deployment console script to orchestrate this end-to-end mapping seamlessly.
 
 ### Prerequisites
-1. Access to a terminal within your active host server or bench container.
-2. An **API Key and API Secret** generated for a user with **System Administrator** access on your target ERPNext instance.
-   > **Note on API Usage**: The API keys are utilized strictly as a **one-time pre-installation setup mechanism** by our external tailoring script to extract your site's custom layout structures over local REST. Once successfully compiled and installed, the application core drops all API reliance and operates **100% locally** via native MariaDB database transactions.
+Depending on your preferred installation method, prepare one of the following:
+* **For Mode 1 (Automated Live Sync)**: An **API Key and API Secret** generated for a user with System Administrator access on your target instance. *(Note: These keys are utilized strictly as a one-time pre-installation extraction mechanism. Once compiled, the app drops all API reliance).*
+* **For Mode 2 (Offline CSV Import)**: No API credentials required. Simply download your site's target field layouts as pre-sorted CSV files via Frappe's native **"Customize Form"** download button.
 
 ### Deployment Instructions
 
@@ -58,7 +58,7 @@ The script will present a choice between two explicit mapping methods:
 * **Option 1: Automated Live Sync**  
   Prompts for your Target Site Name, local instance URL, and one-time Administrator API Credentials to programmatically extract active layout metadata (`tabCustom Field` overlays + `tabProperty Setter` properties) over the network.
 * **Option 2: Offline CSV Template Import**  
-  Allows bypassing network API loops entirely. You simply download your field layout as a CSV file natively via Frappe's pre-sorted **"Customize Form"** view and save it to `project_docs/project_files/item layout.csv`. The installer parses rows sequentially, maps headers flexibly, auto-hashes layout breaks, and merges your R&D layout additively over the base package structure.
+  Allows bypassing network API loops entirely. You simply download your target site's custom layout as a pre-sorted CSV file natively via Frappe's **"Customize Form"** screen (using the Download button). During execution, the installation script will prompt you to provide the file paths for your exported layouts. It parses rows sequentially, maps headers flexibly, auto-hashes layout breaks, and merges your site's custom field definitions additively over the package proxy structures.
 
 #### 4. Automated Execution
 Once your synchronization path is complete, the console wrapper programmatically executes:
