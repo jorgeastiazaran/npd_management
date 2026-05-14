@@ -29,7 +29,7 @@ This repository is organized as a fully self-contained deployment suite containi
 
 ## 🚀 Installation Guide for External ERPNext Instances
 
-Because every enterprise customizes their standard `Item` and `BOM` screens with unique internal fields and mandatory toggles, the NPD module must structuralize its layouts to match your target environment precisely *before* compilation.
+Because every enterprise customizes their operational master records (`Item`, `BOM`, `Work Order`, `Quality Inspection`, `Supplier`, `Quotation`) with unique internal fields and mandatory toggles, the custom application dynamically mirrors all of these standard layouts directly into their counterpart **NPD proxy schemas** (`NPD Item`, `NPD BOM`, `NPD Trial`, `NPD Quality Inspection`, `NPD Supplier`, `NPD Quotation`) precisely *before* final installation. This guarantees absolute structural parity and zero runtime upgrade conflicts.
 
 We provide a streamlined, automated deployment console script to orchestrate this end-to-end mapping seamlessly.
 
