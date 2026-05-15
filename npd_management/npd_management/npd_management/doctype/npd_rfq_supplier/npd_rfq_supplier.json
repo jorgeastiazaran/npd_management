@@ -1,67 +1,67 @@
 {
- "name": "NPD RFQ Supplier",
- "doctype": "DocType",
- "module": "npd_management",
- "custom": 0,
- "istable": 1,
- "editable_grid": 1,
- "fields": [
-  {
-   "fieldname": "supplier_type",
-   "fieldtype": "Select",
-   "label": "Supplier Type",
-   "options": "Supplier\nNPD Supplier",
-   "reqd": 1,
-   "default": "NPD Supplier",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "supplier",
-   "fieldtype": "Dynamic Link",
-   "label": "Supplier",
-   "options": "supplier_type",
-   "reqd": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "supplier_name",
-   "fieldtype": "Data",
-   "label": "Supplier Name",
-   "fetch_from": "supplier.supplier_name",
-   "read_only": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "email_id",
-   "fieldtype": "Data",
-   "label": "Email",
-   "options": "Email"
-  },
-  {
-   "fieldname": "contact",
-   "fieldtype": "Link",
-   "label": "Contact",
-   "options": "Contact"
-  },
-  {
-   "fieldname": "quote_status",
-   "fieldtype": "Select",
-   "label": "Quote Status",
-   "options": "\nPending\nReceived\nNo Quote",
-   "default": "",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "send_email",
-   "fieldtype": "Check",
-   "label": "Send Email",
-   "default": "0"
-  },
-  {
-   "fieldname": "download_pdf",
-   "fieldtype": "Button",
-   "label": "Download PDF"
-  }
- ],
- "permissions": []
+    "name": "NPD RFQ Supplier",
+    "doctype": "DocType",
+    "module": "npd_management",
+    "custom": 0,
+    "istable": 1,
+    "editable_grid": 1,
+    "fields": [
+        {
+            "fieldname": "supplier_type",
+            "fieldtype": "Select",
+            "label": "Supplier Type",
+            "options": "Supplier\nNPD Supplier",
+            "reqd": 1,
+            "default": "NPD Supplier",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "supplier",
+            "fieldtype": "Dynamic Link",
+            "label": "Supplier",
+            "options": "supplier_type",
+            "reqd": 1,
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "supplier_name",
+            "fieldtype": "Data",
+            "label": "Supplier Name",
+            "fetch_from": "supplier.supplier_name",
+            "read_only": 1,
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "email_id",
+            "fieldtype": "Data",
+            "label": "Email",
+            "options": "Email"
+        },
+        {
+            "fieldname": "contact",
+            "fieldtype": "Link",
+            "label": "Contact",
+            "options": "Contact"
+        },
+        {
+            "fieldname": "quote_status",
+            "fieldtype": "Select",
+            "label": "Quote Status",
+            "options": "\nPending\nReceived\nNo Quote",
+            "default": "",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "send_email",
+            "fieldtype": "Check",
+            "label": "Send Email",
+            "default": "0"
+        },
+        {
+            "fieldname": "download_pdf",
+            "fieldtype": "Button",
+            "label": "Download PDF"
+        }
+    ],
+    "permissions": []
 }

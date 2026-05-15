@@ -57,7 +57,7 @@ def to_int(value):
 def compile_from_csv(doctype_name, csv_path, new_name):
     """Compiles an offline CSV export over the existing application default JSON skeleton to preserve parent metadata."""
     safe_name = new_name.lower().replace(" ", "_")
-    skeleton_path = f"npd_management/npd_management/doctype/{safe_name}/{safe_name}.json"
+    skeleton_path = f"npd_management/npd_management/npd_management/doctype/{safe_name}/{safe_name}.json"
     
     if not os.path.exists(skeleton_path):
         print(f"[ERROR] Default JSON skeleton not found at {skeleton_path}. Please ensure module default bundle source files exist.")
@@ -256,7 +256,7 @@ def save_doctype_locally(doctype_name, schema_data, new_name):
     
     # Create standard Frappe app subdirectory structure
     safe_name = new_name.lower().replace(" ", "_")
-    base_dir = f"npd_management/npd_management/doctype/{safe_name}"
+    base_dir = f"npd_management/npd_management/npd_management/doctype/{safe_name}"
     os.makedirs(base_dir, exist_ok=True)
     
     # Save optimized JSON output

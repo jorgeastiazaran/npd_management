@@ -1,96 +1,96 @@
 {
- "name": "NPD RFQ Item",
- "doctype": "DocType",
- "module": "npd_management",
- "custom": 0,
- "istable": 1,
- "editable_grid": 1,
- "fields": [
-  {
-   "fieldname": "item_type",
-   "fieldtype": "Select",
-   "label": "Item Type",
-   "options": "Item\nNPD Item",
-   "reqd": 1,
-   "default": "Item",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "item_code",
-   "fieldtype": "Dynamic Link",
-   "label": "Item Code",
-   "options": "item_type",
-   "reqd": 1,
-   "in_list_view": 1,
-   "search_index": 1
-  },
-  {
-   "fieldname": "item_name",
-   "fieldtype": "Data",
-   "label": "Item Name",
-   "fetch_from": "item_code.item_name",
-   "read_only": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "description",
-   "fieldtype": "Text Editor",
-   "label": "Description"
-  },
-  {
-   "fieldname": "qty",
-   "fieldtype": "Float",
-   "label": "Quantity",
-   "reqd": 1,
-   "in_list_view": 1,
-   "default": "1"
-  },
-  {
-   "fieldname": "uom",
-   "fieldtype": "Link",
-   "label": "UOM",
-   "options": "UOM",
-   "reqd": 1,
-   "fetch_from": "item_code.stock_uom"
-  },
-  {
-   "fieldname": "col_break1",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "warehouse",
-   "fieldtype": "Link",
-   "label": "Warehouse",
-   "options": "Warehouse"
-  },
-  {
-   "fieldname": "project",
-   "fieldtype": "Link",
-   "label": "Project",
-   "options": "Project"
-  },
-  {
-   "fieldname": "schedule_date",
-   "fieldtype": "Date",
-   "label": "Required Date"
-  },
-  {
-   "fieldname": "material_request",
-   "fieldtype": "Link",
-   "label": "Material Request",
-   "options": "Material Request"
-  },
-  {
-   "fieldname": "material_request_item",
-   "fieldtype": "Data",
-   "label": "Material Request Item"
-  },
-  {
-   "fieldname": "page_break",
-   "fieldtype": "Check",
-   "label": "Page Break",
-   "default": "0"
-  }
- ],
- "permissions": []
+    "name": "NPD RFQ Item",
+    "doctype": "DocType",
+    "module": "npd_management",
+    "custom": 0,
+    "istable": 1,
+    "editable_grid": 1,
+    "fields": [
+        {
+            "fieldname": "item_type",
+            "fieldtype": "Select",
+            "label": "Item Type",
+            "options": "Item\nNPD Item",
+            "reqd": 1,
+            "default": "Item",
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "item_code",
+            "fieldtype": "Dynamic Link",
+            "label": "Item Code",
+            "options": "item_type",
+            "reqd": 1,
+            "in_list_view": 1,
+            "search_index": 1
+        },
+        {
+            "fieldname": "item_name",
+            "fieldtype": "Data",
+            "label": "Item Name",
+            "fetch_from": "item_code.item_name",
+            "read_only": 1,
+            "in_list_view": 1
+        },
+        {
+            "fieldname": "description",
+            "fieldtype": "Text Editor",
+            "label": "Description"
+        },
+        {
+            "fieldname": "qty",
+            "fieldtype": "Float",
+            "label": "Quantity",
+            "reqd": 1,
+            "in_list_view": 1,
+            "default": "1"
+        },
+        {
+            "fieldname": "uom",
+            "fieldtype": "Link",
+            "label": "UOM",
+            "options": "UOM",
+            "reqd": 1,
+            "fetch_from": "item_code.stock_uom"
+        },
+        {
+            "fieldname": "col_break1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "warehouse",
+            "fieldtype": "Link",
+            "label": "Warehouse",
+            "options": "Warehouse"
+        },
+        {
+            "fieldname": "project",
+            "fieldtype": "Link",
+            "label": "Project",
+            "options": "Project"
+        },
+        {
+            "fieldname": "schedule_date",
+            "fieldtype": "Date",
+            "label": "Required Date"
+        },
+        {
+            "fieldname": "material_request",
+            "fieldtype": "Link",
+            "label": "Material Request",
+            "options": "Material Request"
+        },
+        {
+            "fieldname": "material_request_item",
+            "fieldtype": "Data",
+            "label": "Material Request Item"
+        },
+        {
+            "fieldname": "page_break",
+            "fieldtype": "Check",
+            "label": "Page Break",
+            "default": "0"
+        }
+    ],
+    "permissions": []
 }

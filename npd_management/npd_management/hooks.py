@@ -24,13 +24,13 @@ fixtures = [
 
 # ─── Hooks ───────────────────────────────────────────────────────────────────
 # after_migrate: runs after every `bench migrate`
-after_migrate = []
+after_migrate = "npd_management.setup.install.after_install"
 
 # after_install: runs once when the app is first installed on a new site
-after_install = []
+after_install = "npd_management.setup.install.after_install"
 
 doc_events = {
     "Item": {
-        "after_insert": "npd_management.api.npd_utils.link_promoted_item"
+        # "after_insert": "npd_management.api.npd_utils.link_promoted_item"
     }
 }
