@@ -1,0 +1,11 @@
+{
+ "app": "npd_management",
+ "category": "Modules",
+ "content": "[{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD Item\",\"link_to\":\"NPD Item\",\"link_type\":\"DocType\",\"icon\":\"package\"}},{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD BOM\",\"link_to\":\"NPD BOM\",\"link_type\":\"DocType\",\"icon\":\"package\"}},{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD Trial\",\"link_to\":\"NPD Trial\",\"link_type\":\"DocType\",\"icon\":\"package\"}},{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD RFQ\",\"link_to\":\"NPD RFQ\",\"link_type\":\"DocType\",\"icon\":\"package\"}},{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD Quotation\",\"link_to\":\"NPD Quotation\",\"link_type\":\"DocType\",\"icon\":\"package\"}},{\"type\":\"shortcut\",\"data\":{\"label\":\"NPD Supplier Quotation\",\"link_to\":\"NPD Supplier Quotation\",\"link_type\":\"DocType\",\"icon\":\"package\"}}]",
+ "doctype": "Workspace",
+ "icon": "package",
+ "is_standard": 1,
+ "label": "NPD Management",
+ "module": "NPD Management",
+ "name": "NPD Management"
+}
