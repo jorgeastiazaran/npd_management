@@ -2,11 +2,10 @@ import json
 import requests
 import os
 
-# Configuration (reading from .env if needed, but I'll hardcode for speed)
-# New Test Instance
-URL = "https://tecno13.posix.mx"
-API_KEY = "2159cfdb591a269"
-API_SECRET = "7c2e286645d9d00"
+# Configuration (reading from environment variables for security)
+URL = os.getenv("TARGET_ERPNEXT_URL", "")
+API_KEY = os.getenv("TARGET_USER_API_KEY", "")
+API_SECRET = os.getenv("TARGET_USER_API_SECRET", "")
 
 def make_api_request(method, endpoint, params=None, data=None):
     headers = {

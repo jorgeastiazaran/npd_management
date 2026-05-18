@@ -65,7 +65,8 @@ def finalize_json(file_path):
         json.dump(data, f, indent=4)
 
 def main():
-    base_path = "npd_management/npd_management/npd_management/doctype"
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.join(SCRIPT_DIR, "npd_management", "npd_management", "doctype")
     for subdir in os.listdir(base_path):
         dir_path = os.path.join(base_path, subdir)
         if os.path.isdir(dir_path):

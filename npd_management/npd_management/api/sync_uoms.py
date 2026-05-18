@@ -6,9 +6,9 @@ import frappe
 import requests
 import os
 
-PROD_URL = os.environ.get("ERPNEXT_URL", "https://tecno.posix.mx/")
-API_KEY = os.environ.get("USER_API_KEY", "bae78da7bacbb67")
-API_SECRET = os.environ.get("USER_API_SECRET", "3ffa8a859d16328")
+PROD_URL = os.environ.get("ERPNEXT_URL", "")
+API_KEY = os.environ.get("USER_API_KEY", "")
+API_SECRET = os.environ.get("USER_API_SECRET", "")
 
 def get_production_uoms():
     """Fetch all UOM records from production ERPNext."""
