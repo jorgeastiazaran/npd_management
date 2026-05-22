@@ -3,7 +3,7 @@
 import frappe
 from frappe.utils import flt
 
-from npd_management.npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
+from npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
     get_active_profile,
     NUTRITIONAL_FIELDS,
 )

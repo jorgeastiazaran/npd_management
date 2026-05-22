@@ -38,7 +38,7 @@ frappe.ui.form.on('NPD Quotation Item', {
         let row = frappe.get_doc(cdt, cdn);
         if (row.npd_item) {
             frappe.call({
-                method: 'npd_management.npd_management.doctype.npd_quotation.npd_quotation.get_formula_estimated_cost',
+                method: 'npd_management.doctype.npd_quotation.npd_quotation.get_formula_estimated_cost',
                 args: { npd_item: row.npd_item },
                 callback: function(r) {
                     if (!r.exc && r.message !== undefined) {

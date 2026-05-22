@@ -15,7 +15,7 @@ API_SECRET = os.getenv("USER_API_SECRET")
 
 # Robust absolute path mappings to prevent Cwd dependencies
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PACKAGE_DIR = os.path.join(SCRIPT_DIR, "npd_management", "npd_management")
+PACKAGE_DIR = os.path.join(SCRIPT_DIR, "npd_management", "npd_management", "npd_management")
 DOCTYPE_DIR = os.path.join(PACKAGE_DIR, "doctype")
 
 
@@ -187,7 +187,8 @@ def get_doctype_schema(doctype_name):
         if response.status_code != 200:
             print(f"Failed to fetch compiled {doctype_name} meta. Status Code: {response.status_code}")
             return None
-        payload = response.json().get("message", {})
+        res_json = response.json()
+        payload = res_json.get("message") if isinstance(res_json.get("message"), dict) else res_json
     except requests.exceptions.RequestException as e:
         print(f"Network error fetching compiled {doctype_name} meta: {e}")
         return None
@@ -247,6 +248,16 @@ def get_doctype_schema(doctype_name):
     for sys_key in system_fields:
         schema_data.pop(sys_key, None)
         
+    # Clean up child tables to prevent PRIMARY KEY database collisions on import
+    for child_key in ["permissions", "links", "actions", "states"]:
+        if child_key in schema_data and isinstance(schema_data[child_key], list):
+            cleaned_children = []
+            for child in schema_data[child_key]:
+                if isinstance(child, dict):
+                    cleaned_child = {k: v for k, v in child.items() if k not in system_fields}
+                    cleaned_children.append(cleaned_child)
+            schema_data[child_key] = cleaned_children
+
     schema_data["fields"] = cleaned_fields
     return schema_data
 

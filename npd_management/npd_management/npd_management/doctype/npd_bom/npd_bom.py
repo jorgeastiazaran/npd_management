@@ -130,7 +130,7 @@ class NPDBOM(Document):
         """
         On NPD BOM submission: lock referenced profiles and freeze the snapshot.
         """
-        from npd_management.npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
+        from npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
             lock_profile,
         )
 
