@@ -198,6 +198,7 @@
    "fieldname": "npdi_nutrition_per_100g_kcal",
    "fieldtype": "Float",
    "label": "Energy (kcal / 100g)",
+   "no_copy": 1,
    "read_only": 1
   },
   {
