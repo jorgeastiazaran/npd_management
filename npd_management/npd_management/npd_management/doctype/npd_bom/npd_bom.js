@@ -98,6 +98,12 @@ frappe.ui.form.on("NPD BOM Item", {
     has_nutritional_content: function(frm, cdt, cdn) {
         frm.trigger("calculate_nutritional_info");
     },
+    include_in_nutrient_calc: function(frm) {
+        frm.trigger("calculate_nutritional_info");
+    },
+    uom: function(frm) {
+        frm.trigger("calculate_nutritional_info");
+    },
     item_doctype: function(frm, cdt, cdn) {
         // Clear item when type changes in a row
         frappe.model.set_value(cdt, cdn, "item_code", "");

@@ -15,7 +15,7 @@ def get_data():
 			},
 			{
 				"label": _("Quality"),
-				"items": ["NPD Quality Inspection"]
+				"items": ["NPD Quality Inspection", "NPD Nutritional Profile"]
 			}
 		]
 	}

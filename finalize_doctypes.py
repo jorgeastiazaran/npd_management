@@ -46,27 +46,32 @@ def finalize_json(file_path):
             if options in MAPPINGS:
                 field["options"] = MAPPINGS[options]
                 
-    # Add Nutritional Info to NPD Item and NPD BOM
-    if data["name"] in ["NPD Item", "NPD BOM"]:
-        # Find a good place to insert (usually at the end or before standard sections)
-        data["fields"].extend(NUTRITIONAL_FIELDS)
+    # Add Nutritional Info to NPD BOM only (NPD Item uses NPD Nutritional Profile doctype)
+    if data["name"] == "NPD BOM":
+        existing_fields = {f.get("fieldname") for f in data.get("fields", []) if f.get("fieldname")}
+        for field in NUTRITIONAL_FIELDS:
+            if field["fieldname"] not in existing_fields:
+                data["fields"].append(field)
         
     # Add Costing fields to NPD BOM
     if data["name"] == "NPD BOM":
+        existing_fields = {f.get("fieldname") for f in data.get("fields", []) if f.get("fieldname")}
         costing_fields = [
             {"fieldname": "npd_costing_section", "label": "NPD Costing", "fieldtype": "Section Break"},
             {"fieldname": "valuation_method", "label": "Valuation Method", "fieldtype": "Select", 
              "options": "\nValuation Rate\nLast Purchase Rate", "default": "Valuation Rate"},
             {"fieldname": "total_cost", "label": "Total Cost", "fieldtype": "Float", "read_only": 1}
         ]
-        data["fields"].extend(costing_fields)
+        for field in costing_fields:
+            if field["fieldname"] not in existing_fields:
+                data["fields"].append(field)
 
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
 
 def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    base_path = os.path.join(SCRIPT_DIR, "npd_management", "npd_management", "doctype")
+    base_path = os.path.join(SCRIPT_DIR, "npd_management", "npd_management", "npd_management", "doctype")
     for subdir in os.listdir(base_path):
         dir_path = os.path.join(base_path, subdir)
         if os.path.isdir(dir_path):

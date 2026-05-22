@@ -41,6 +41,31 @@ frappe.ui.form.on("NPD Item", {
                     frappe.new_doc("Item", doc_data);
                 }).addClass("btn-primary");
             }
+
+            // ── Nutritional Profile button ─────────────────────────────────────
+            frm.add_custom_button(__("Manage Nutritional Profile"), function() {
+                // Check if there's an existing profile for this item
+                frappe.db.get_list("NPD Nutritional Profile", {
+                    filters: { npd_item: frm.doc.name },
+                    limit: 1,
+                    fields: ["name"]
+                }).then(function(existing) {
+                    if (existing && existing.length > 0) {
+                        // Open list filtered to this item
+                        frappe.set_route("List", "NPD Nutritional Profile", {
+                            npd_item: frm.doc.name
+                        });
+                    } else {
+                        // Create a new profile pre-filled with this item
+                        frappe.new_doc("NPD Nutritional Profile", {
+                            npd_item: frm.doc.name,
+                            title: frm.doc.name + " — Perfil Nutricional",
+                            is_default: 1
+                        });
+                    }
+                });
+            }, __("Nutritional"));
         }
     }
 });
+
