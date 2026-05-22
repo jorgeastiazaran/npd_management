@@ -44,7 +44,7 @@ app_include_js = [
 ]
 
 override_doctype_dashboards = {
-    "Item": "npd_management.npd_management.npd_management.item_dashboard.get_data"
+    "Item": "npd_management.item_dashboard.get_data"
 }
 
 doctype_js = {
