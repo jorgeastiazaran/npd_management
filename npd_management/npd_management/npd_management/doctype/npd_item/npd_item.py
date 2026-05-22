@@ -40,6 +40,20 @@ class NPDItem(Document):
                 if not self.item_code:
                     self.item_code = self.linked_item
                 self.save()
+                
+                # Copy Nutritional Profiles
+                profiles = frappe.get_all("Nutritional Profile", filters={
+                    "reference_doctype": "NPD Item",
+                    "reference_name": self.name
+                })
+                for profile_info in profiles:
+                    profile_doc = frappe.get_doc("Nutritional Profile", profile_info.name)
+                    new_profile = frappe.copy_doc(profile_doc)
+                    new_profile.reference_doctype = "Item"
+                    new_profile.reference_name = self.linked_item
+                    new_profile.title = f"{profile_doc.title} (Promoted)"
+                    new_profile.insert(ignore_permissions=True)
+                
                 frappe.msgprint(f"Successfully created Item {self.linked_item} in ERPNext.")
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "NPD Promotion Error")

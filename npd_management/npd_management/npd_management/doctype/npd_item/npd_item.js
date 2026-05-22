@@ -45,26 +45,47 @@ frappe.ui.form.on("NPD Item", {
             // ── Nutritional Profile button ─────────────────────────────────────
             frm.add_custom_button(__("Manage Nutritional Profile"), function() {
                 // Check if there's an existing profile for this item
-                frappe.db.get_list("NPD Nutritional Profile", {
-                    filters: { npd_item: frm.doc.name },
+                frappe.db.get_list("Nutritional Profile", {
+                    filters: { reference_doctype: "NPD Item", reference_name: frm.doc.name },
                     limit: 1,
                     fields: ["name"]
                 }).then(function(existing) {
                     if (existing && existing.length > 0) {
                         // Open list filtered to this item
-                        frappe.set_route("List", "NPD Nutritional Profile", {
-                            npd_item: frm.doc.name
+                        frappe.set_route("List", "Nutritional Profile", {
+                            reference_doctype: "NPD Item",
+                            reference_name: frm.doc.name
                         });
                     } else {
                         // Create a new profile pre-filled with this item
-                        frappe.new_doc("NPD Nutritional Profile", {
-                            npd_item: frm.doc.name,
-                            title: frm.doc.name + " — Perfil Nutricional",
+                        frappe.new_doc("Nutritional Profile", {
+                            reference_doctype: "NPD Item",
+                            reference_name: frm.doc.name,
                             is_default: 1
                         });
                     }
                 });
             }, __("Nutritional"));
+        }
+    },
+    setup: function(frm) {
+        frm.set_query("npdi_default_nutritional_profile", function() {
+            return {
+                filters: {
+                    docstatus: 1,
+                    reference_doctype: "NPD Item",
+                    reference_name: frm.doc.name
+                }
+            };
+        });
+    },
+    npdi_include_in_nutrient_calc: function(frm) {
+        if (frm.doc.npdi_include_in_nutrient_calc && !frm.doc.stock_uom) {
+            frm.set_value("stock_uom", "Kg");
+            frappe.show_alert({
+                message: __("Defaulted Stock UOM to Kg for nutritional calculations."),
+                indicator: "green"
+            });
         }
     }
 });

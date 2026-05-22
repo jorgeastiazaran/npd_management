@@ -118,19 +118,51 @@ class NPDBOM(Document):
     def calculate_nutritional_info(self):
         """
         Rolls up nutritional information from NPD Nutritional Profile records.
-        Result is normalized to 100g on the parent NPD BOM.
+        Result is normalized to npdi_reference_quantity_g on the parent NPD BOM.
         """
         if getattr(self, "nutritional_snapshot_locked", 0):
-            return
+            return {}
 
-        totals = rollup_nutrition(self.items)
+        parent_ref_qty = flt(self.get("npdi_reference_quantity_g") or 100.0)
+        totals = rollup_nutrition(self.items, parent_ref_qty=parent_ref_qty)
+        warnings = totals.pop("warnings", [])
+        
         apply_rollup_to_doc(self, totals)
+        return {"warnings": warnings}
+
+    @frappe.whitelist()
+    def check_kg_conversions(self, items_json):
+        """Scan BOM items JSON for missing Kg conversions."""
+        import json
+        items = json.loads(items_json)
+        from npd_management.utils.nutritional_rollup import check_missing_kg_conversions
+        return check_missing_kg_conversions(items, item_doctype_key="item_doctype", default_item_doctype="NPD Item")
+
+    @frappe.whitelist()
+    def save_kg_conversions(self, conversions):
+        """Save explicit Kg conversion factors directly into the Item's UOM table."""
+        import json
+        conversions_list = json.loads(conversions)
+        
+        for row in conversions_list:
+            doc = frappe.get_doc(row.get("item_doctype", "NPD Item"), row.get("item_code"))
+            # Add UOM Conversion
+            doc.append("uoms", {
+                "uom": "Kg",
+                "conversion_factor": flt(row.get("conversion_factor"))
+            })
+            doc.flags.ignore_permissions = True
+            doc.flags.ignore_validate = True
+            doc.flags.ignore_mandatory = True
+            doc.save()
+            
+        return True
 
     def on_submit(self):
         """
         On NPD BOM submission: lock referenced profiles and freeze the snapshot.
         """
-        from npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
+        from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import (
             lock_profile,
         )
 

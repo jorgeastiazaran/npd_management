@@ -147,7 +147,7 @@
    "fieldtype": "Select",
    "label": "Series",
    "options": "NPD-PT-.####\nNPD-MP-.####\nNPD-EMB-.####",
-   "reqd": 1,
+   "reqd": 0,
    "set_only_once": 1
   },
   {
@@ -182,7 +182,8 @@
    "fieldname": "npdi_default_nutritional_profile",
    "fieldtype": "Link",
    "label": "Active Nutritional Profile",
-   "options": "NPD Nutritional Profile",
+   "options": "Nutritional Profile",
+   "no_copy": 1,
    "read_only": 1
   },
   {

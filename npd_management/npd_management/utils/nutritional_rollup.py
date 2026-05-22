@@ -3,24 +3,90 @@
 import frappe
 from frappe.utils import flt
 
-from npd_management.npd_management.doctype.npd_nutritional_profile.npd_nutritional_profile import (
+from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import (
     get_active_profile,
     NUTRITIONAL_FIELDS,
 )
 
 
-def to_grams(qty, uom):
-    """Convert a quantity in the given UOM to grams."""
+def get_static_kg_factor(uom):
+    """Return the Kg equivalent of 1 unit of a known mass UOM."""
     uom = (uom or "").strip().lower()
     factors = {
-        "g": 1.0, "gram": 1.0, "gramo": 1.0, "gramos": 1.0,
-        "kg": 1000.0, "kilogram": 1000.0, "kilogramo": 1000.0, "kilogramos": 1000.0,
-        "mg": 0.001, "milligram": 0.001, "miligramo": 0.001,
-        "lb": 453.592, "pound": 453.592, "libra": 453.592,
-        "oz": 28.3495, "ounce": 28.3495, "onza": 28.3495,
+        "kg": 1.0, "kilogram": 1.0, "kilogramo": 1.0, "kilogramos": 1.0,
+        "g": 0.001, "gram": 0.001, "gramo": 0.001, "gramos": 0.001,
+        "mg": 0.000001, "milligram": 0.000001, "miligramo": 0.000001,
+        "lb": 0.453592, "pound": 0.453592, "libra": 0.453592,
+        "oz": 0.0283495, "ounce": 0.0283495, "onza": 0.0283495,
     }
-    factor = factors.get(uom, 1.0)
-    return flt(qty) * factor
+    return factors.get(uom)
+
+
+def get_kg_conversion_factor(item_code, item_doctype):
+    """
+    Return the multiplier to convert stock_qty to Kg.
+    Uses the explicit UOM conversion table where 1 Kg = X stock_uom.
+    """
+    doc = frappe.get_doc(item_doctype, item_code)
+    if (doc.stock_uom or "").lower() == "kg":
+        return 1.0
+    for u in doc.get("uoms", []):
+        if (u.uom or "").lower() == "kg":
+            return 1.0 / flt(u.conversion_factor) if flt(u.conversion_factor) else 0.0
+    return 0.0
+
+
+def check_missing_kg_conversions(items, item_doctype_key="item_doctype", default_item_doctype="NPD Item"):
+    """
+    Scan BOM items for ingredients that lack an explicit Kg conversion.
+    Returns a list of dicts with suggestions for missing conversions.
+    """
+    missing = []
+    seen = set()
+
+    for item in items or []:
+        if not flt(_row_attr(item, "include_in_nutrient_calc", 1)):
+            continue
+
+        item_code = _row_attr(item, "item_code")
+        if not item_code or item_code in seen:
+            continue
+
+        item_type = _row_attr(item, item_doctype_key) or default_item_doctype
+        doc = frappe.get_doc(item_type, item_code)
+
+        if (doc.stock_uom or "").lower() == "kg":
+            seen.add(item_code)
+            continue
+
+        has_kg = False
+        for u in doc.get("uoms", []):
+            if (u.uom or "").lower() == "kg":
+                has_kg = True
+                break
+
+        if not has_kg:
+            suggested = ""
+            static_factor = get_static_kg_factor(doc.stock_uom)
+            if static_factor:
+                # 1 stock_uom = static_factor Kg -> 1 Kg = (1/static_factor) stock_uom
+                suggested = 1.0 / static_factor
+            else:
+                if doc.get("weight_per_unit") and doc.get("weight_uom"):
+                    w_factor = get_static_kg_factor(doc.weight_uom)
+                    if w_factor:
+                        suggested = 1.0 / (flt(doc.weight_per_unit) * w_factor)
+
+            missing.append({
+                "item_code": item_code,
+                "item_doctype": item_type,
+                "stock_uom": doc.stock_uom,
+                "suggested_conversion": suggested
+            })
+        
+        seen.add(item_code)
+
+    return missing
 
 
 def _row_attr(row, key, default=None):
@@ -29,7 +95,7 @@ def _row_attr(row, key, default=None):
     return getattr(row, key, default)
 
 
-def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctype="NPD Item"):
+def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctype="NPD Item", parent_ref_qty=100.0):
     """
     Roll up nutrient values from active NPD Nutritional Profiles for BOM rows.
 
@@ -37,12 +103,14 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
         items: child table rows (doc objects or dicts)
         item_doctype_key: field name for row doctype (NPD BOM uses item_doctype)
         default_item_doctype: default when row has no item_doctype (NPD BOM)
+        parent_ref_qty: The reference quantity (g) of the parent BOM
 
     Returns:
         dict mapping each NUTRITIONAL_FIELDS key to per-100g float values.
     """
     totals = {field: 0.0 for field in NUTRITIONAL_FIELDS}
-    total_weight_g = 0.0
+    total_weight_kg = 0.0
+    warnings = []
 
     for item in items or []:
         if not flt(_row_attr(item, "include_in_nutrient_calc", 1)):
@@ -77,26 +145,52 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
                 continue
 
         ref_g = flt(profile.get("reference_quantity_g") or 100.0)
-        qty = flt(_row_attr(item, "qty"))
-        uom = (_row_attr(item, "uom") or "").lower()
-        weight_g = to_grams(qty, uom)
-        if weight_g <= 0:
+        
+        if ref_g != flt(parent_ref_qty):
+            warnings.append(
+                f"Discrepancy: Item '{item_code}' has reference quantity {ref_g}g, which differs from the BOM's reference quantity {flt(parent_ref_qty)}g."
+            )
+            
+        ref_kg = ref_g / 1000.0
+
+        # Use stock_qty and explicit Kg conversion multiplier
+        stock_qty = flt(_row_attr(item, "stock_qty"))
+        if stock_qty <= 0:
+            # Fallback if stock_qty isn't computed in a custom scenario
+            qty = flt(_row_attr(item, "qty"))
+            conv = flt(_row_attr(item, "conversion_factor") or 1.0)
+            stock_qty = qty * conv
+
+        kg_multiplier = get_kg_conversion_factor(item_code, item_type)
+        weight_kg = stock_qty * kg_multiplier
+        
+        if weight_kg <= 0:
             continue
 
-        total_weight_g += weight_g
+        total_weight_kg += weight_kg
         for field in NUTRITIONAL_FIELDS:
             val_per_ref = flt(profile.get(field, 0))
-            totals[field] += (val_per_ref / ref_g) * weight_g
+            totals[field] += (val_per_ref / ref_kg) * weight_kg
 
-    if total_weight_g > 0:
-        return {field: totals[field] / total_weight_g * 100.0 for field in NUTRITIONAL_FIELDS}
-    return {field: 0.0 for field in NUTRITIONAL_FIELDS}
+    result = {}
+    if total_weight_kg > 0:
+        result = {field: totals[field] / total_weight_kg * (flt(parent_ref_qty) / 1000.0) for field in NUTRITIONAL_FIELDS}
+    else:
+        result = {field: 0.0 for field in NUTRITIONAL_FIELDS}
+        
+    result["total_yield_kg"] = total_weight_kg
+    result["warnings"] = warnings
+    return result
 
 
 def apply_rollup_to_doc(doc, totals):
     """Set nutritional field values on a BOM document."""
     for field, value in totals.items():
-        setattr(doc, field, value)
+        if field == "total_yield_kg":
+            if hasattr(doc, "npdi_total_yield_kg"):
+                doc.npdi_total_yield_kg = value
+        elif hasattr(doc, field):
+            setattr(doc, field, value)
 
 
 def collect_profile_names_from_items(items, item_doctype_key="item_doctype", default_item_doctype="NPD Item"):

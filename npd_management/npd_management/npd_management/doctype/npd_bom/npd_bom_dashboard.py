@@ -7,7 +7,7 @@ def get_data():
 			"NPD Trial": "bom_no"
 		},
 		"internal_links": {
-			"NPD Item": ["item", "item_code"]
+			"NPD Item": ["item"]
 		},
 		"transactions": [
 			{

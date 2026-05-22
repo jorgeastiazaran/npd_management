@@ -49,5 +49,22 @@
   "property_type": "Text",
   "row_name": null,
   "value": ""
+ },
+ {
+  "default_value": null,
+  "doc_type": "NPD Trial",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2026-05-22 13:07:34.057888",
+  "name": "NPD Trial-naming_series-options",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "MFG-WO-.YYYY.-"
  }
 ]

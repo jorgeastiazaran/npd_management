@@ -7,7 +7,7 @@ def get_data():
 			"NPD Quality Inspection": "reference_name"
 		},
 		"internal_links": {
-			"NPD Item": ["production_item", "item"],
+			"NPD Item": ["production_item"],
 			"NPD BOM": ["bom_no"]
 		},
 		"transactions": [

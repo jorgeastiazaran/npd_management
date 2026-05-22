@@ -28,6 +28,55 @@ frappe.ui.form.on("BOM", {
         if (frm.doc.__islocal) {
             return;
         }
+        
+        frappe.call({
+            method: "npd_management.bom_nutrition.check_kg_conversions",
+            args: { items_json: JSON.stringify(frm.doc.items) },
+            callback: function(r) {
+                let missing = r.message || [];
+                if (missing.length > 0) {
+                    let fields = [
+                        { fieldname: "help_html", fieldtype: "HTML", options: "<div class='text-muted'>" + __("The following items are missing a Kg conversion factor. Nutritional calculation requires a Kg conversion. Please confirm the conversion factors:") + "</div>" }
+                    ];
+                    
+                    missing.forEach((item, idx) => {
+                        fields.push({ fieldtype: "Section Break" });
+                        fields.push({ fieldname: "item_html_" + idx, fieldtype: "HTML", options: "<b>" + item.item_code + "</b> (" + item.stock_uom + ")" });
+                        fields.push({ fieldname: "conv_" + idx, fieldtype: "Float", label: __("1 Kg = [X] ") + item.stock_uom, reqd: 1, default: item.suggested_conversion || "" });
+                    });
+                    
+                    let d = new frappe.ui.Dialog({
+                        title: __("Missing Kg Conversions"),
+                        fields: fields,
+                        primary_action: function(values) {
+                            let conversions = [];
+                            missing.forEach((item, idx) => {
+                                conversions.push({
+                                    item_code: item.item_code,
+                                    item_doctype: item.item_doctype,
+                                    conversion_factor: values["conv_" + idx]
+                                });
+                            });
+                            
+                            frappe.call({
+                                method: "npd_management.bom_nutrition.save_kg_conversions",
+                                args: { conversions: JSON.stringify(conversions) },
+                                freeze: true,
+                                callback: function(r2) {
+                                    d.hide();
+                                    frm.trigger("_do_recalculate");
+                                }
+                            });
+                        }
+                    });
+                    d.show();
+                } else {
+                    frm.trigger("_do_recalculate");
+                }
+            }
+        });
+    },
+    _do_recalculate: function(frm) {
         frappe.call({
             method: "npd_management.bom_nutrition.recalculate_bom_nutrition",
             args: { bom_name: frm.doc.name },

@@ -38,14 +38,23 @@
     "index_web_pages_for_search": 1,
     "fields": [
         {
+            "fieldname": "item_doctype",
+            "fieldtype": "Select",
+            "label": "Item Doctype",
+            "options": "NPD Item\nItem",
+            "default": "NPD Item",
+            "in_list_view": 1,
+            "idx": 1
+        },
+        {
             "doctype": "DocField",
-            "idx": 1,
+            "idx": 2,
             "fieldname": "item_code",
             "label": "Item Code",
             "oldfieldname": "item_code",
-            "fieldtype": "Link",
+            "fieldtype": "Dynamic Link",
             "oldfieldtype": "Link",
-            "options": "NPD Item",
+            "options": "item_doctype",
             "search_index": 1,
             "hidden": 0,
             "set_only_once": 0,
@@ -90,7 +99,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 2,
+            "idx": 3,
             "fieldname": "item_name",
             "label": "Item Name",
             "fieldtype": "Data",
@@ -133,7 +142,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 3,
+            "idx": 4,
             "fieldname": "operation",
             "label": "Item operation",
             "fieldtype": "Link",
@@ -178,7 +187,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 4,
+            "idx": 5,
             "fieldname": "column_break_3",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -220,7 +229,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 5,
+            "idx": 6,
             "fieldname": "do_not_explode",
             "label": "Do Not Explode",
             "fieldtype": "Check",
@@ -264,7 +273,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 6,
+            "idx": 7,
             "fieldname": "bom_no",
             "label": "BOM No",
             "oldfieldname": "bom_no",
@@ -316,7 +325,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 7,
+            "idx": 8,
             "fieldname": "source_warehouse",
             "label": "Source Warehouse",
             "fieldtype": "Link",
@@ -360,7 +369,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 8,
+            "idx": 9,
             "fieldname": "allow_alternative_item",
             "label": "Allow Alternative Item",
             "fieldtype": "Check",
@@ -404,7 +413,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 9,
+            "idx": 10,
             "fieldname": "section_break_5",
             "label": "Description",
             "fieldtype": "Section Break",
@@ -447,7 +456,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 10,
+            "idx": 11,
             "fieldname": "description",
             "label": "Item Description",
             "oldfieldname": "description",
@@ -494,7 +503,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 11,
+            "idx": 12,
             "fieldname": "col_break1",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -536,7 +545,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 12,
+            "idx": 13,
             "fieldname": "image_view",
             "label": "Image View",
             "fieldtype": "Image",
@@ -580,7 +589,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 13,
+            "idx": 14,
             "fieldname": "quantity_and_rate",
             "label": "Quantity and Rate",
             "fieldtype": "Section Break",
@@ -623,7 +632,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 14,
+            "idx": 15,
             "fieldname": "qty",
             "label": "Qty",
             "oldfieldname": "qty",
@@ -645,7 +654,7 @@
             "show_preview_popup": 0,
             "permlevel": 0,
             "ignore_user_permissions": 0,
-            "columns": 2,
+            "columns": 1,
             "in_list_view": 1,
             "fetch_if_empty": 0,
             "in_filter": 0,
@@ -671,11 +680,12 @@
             "label": "Include in Nutrient Calculation",
             "fieldtype": "Check",
             "default": "1",
-            "in_list_view": 1
+            "in_list_view": 0,
+            "idx": 16
         },
         {
             "doctype": "DocField",
-            "idx": 15,
+            "idx": 17,
             "fieldname": "uom",
             "label": "UOM",
             "fieldtype": "Link",
@@ -719,7 +729,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 16,
+            "idx": 18,
             "fieldname": "col_break2",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -761,7 +771,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 17,
+            "idx": 19,
             "fieldname": "stock_qty",
             "label": "Stock Qty",
             "oldfieldname": "stock_qty",
@@ -806,7 +816,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 18,
+            "idx": 20,
             "fieldname": "stock_uom",
             "label": "Stock UOM",
             "oldfieldname": "stock_uom",
@@ -852,7 +862,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 19,
+            "idx": 21,
             "fieldname": "conversion_factor",
             "label": "Conversion Factor",
             "fieldtype": "Float",
@@ -895,7 +905,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 20,
+            "idx": 22,
             "fieldname": "rate_amount_section",
             "label": "Rate & Amount",
             "fieldtype": "Section Break",
@@ -938,7 +948,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 21,
+            "idx": 23,
             "fieldname": "rate",
             "label": "Rate",
             "fieldtype": "Currency",
@@ -982,7 +992,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 22,
+            "idx": 24,
             "fieldname": "base_rate",
             "label": "Basic Rate (Company Currency)",
             "fieldtype": "Currency",
@@ -1026,7 +1036,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 23,
+            "idx": 25,
             "fieldname": "column_break_21",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -1068,7 +1078,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 24,
+            "idx": 26,
             "fieldname": "amount",
             "label": "Amount",
             "oldfieldname": "amount_as_per_mar",
@@ -1116,7 +1126,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 25,
+            "idx": 27,
             "fieldname": "base_amount",
             "label": "Amount (Company Currency)",
             "fieldtype": "Currency",
@@ -1160,7 +1170,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 26,
+            "idx": 28,
             "fieldname": "section_break_18",
             "fieldtype": "Section Break",
             "search_index": 0,
@@ -1202,7 +1212,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 27,
+            "idx": 29,
             "fieldname": "scrap",
             "label": "Scrap %",
             "oldfieldname": "scrap",
@@ -1247,7 +1257,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 28,
+            "idx": 30,
             "fieldname": "section_break_27",
             "fieldtype": "Section Break",
             "search_index": 0,
@@ -1289,7 +1299,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 29,
+            "idx": 31,
             "fieldname": "has_variants",
             "label": "Has Variants",
             "fieldtype": "Check",
@@ -1334,7 +1344,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 30,
+            "idx": 32,
             "fieldname": "include_item_in_manufacturing",
             "label": "Include Item In Manufacturing",
             "fieldtype": "Check",
@@ -1379,7 +1389,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 31,
+            "idx": 33,
             "fieldname": "column_break_33",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -1421,7 +1431,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 32,
+            "idx": 34,
             "fieldname": "sourced_by_supplier",
             "label": "Sourced by Supplier",
             "fieldtype": "Check",

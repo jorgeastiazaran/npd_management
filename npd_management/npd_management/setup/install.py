@@ -49,8 +49,19 @@ def _bom_nutrition_fields(insert_after):
     return fields
 
 
+def ensure_kg_uom():
+    """Ensure the Kg UOM exists for nutritional calculations."""
+    if not frappe.db.exists("UOM", "Kg"):
+        frappe.get_doc({
+            "doctype": "UOM",
+            "uom_name": "Kg",
+            "must_be_whole_number": 0
+        }).insert(ignore_permissions=True)
+
+
 def after_install():
     """Hook executed after app installation to inject custom fields into standard DocTypes."""
+    ensure_kg_uom()
     create_custom_fields(get_custom_fields(), ignore_validate=True)
 
 
@@ -80,8 +91,9 @@ def get_custom_fields():
                 "fieldname": "npdi_default_nutritional_profile",
                 "label": "Active Nutritional Profile",
                 "fieldtype": "Link",
-                "options": "NPD Nutritional Profile",
+                "options": "Nutritional Profile",
                 "insert_after": "npdi_section_nutrition",
+                "no_copy": 1,
                 "read_only": 1,
                 "description": "The default NPD Nutritional Profile for this item. Set automatically when a profile is marked as default."
             },
@@ -98,6 +110,7 @@ def get_custom_fields():
                 "label": "Energy (kcal / 100g)",
                 "fieldtype": "Float",
                 "insert_after": "npdi_include_in_nutrient_calc",
+                "no_copy": 1,
                 "read_only": 1,
                 "description": "Summary field: kcal per 100g from the active nutritional profile."
             }
@@ -115,8 +128,9 @@ def get_custom_fields():
                 "fieldname": "npdi_default_nutritional_profile",
                 "label": "Active Nutritional Profile",
                 "fieldtype": "Link",
-                "options": "NPD Nutritional Profile",
+                "options": "Nutritional Profile",
                 "insert_after": "npdi_section_nutrition",
+                "no_copy": 1,
                 "read_only": 1,
                 "description": "The default NPD Nutritional Profile for this item."
             },
@@ -132,6 +146,7 @@ def get_custom_fields():
                 "label": "Energy (kcal / 100g)",
                 "fieldtype": "Float",
                 "insert_after": "npdi_include_in_nutrient_calc",
+                "no_copy": 1,
                 "read_only": 1
             }
         ],

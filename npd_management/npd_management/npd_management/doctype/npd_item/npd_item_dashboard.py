@@ -6,7 +6,8 @@ def get_data():
 		"non_standard_fieldnames": {
 			"NPD BOM": "item",
 			"NPD Trial": "production_item",
-			"NPD Quality Inspection": "item_code"
+			"NPD Quality Inspection": "item_code",
+			"Nutritional Profile": "reference_name"
 		},
 		"transactions": [
 			{
@@ -15,7 +16,7 @@ def get_data():
 			},
 			{
 				"label": _("Quality"),
-				"items": ["NPD Quality Inspection", "NPD Nutritional Profile"]
+				"items": ["NPD Quality Inspection", "Nutritional Profile"]
 			}
 		]
 	}

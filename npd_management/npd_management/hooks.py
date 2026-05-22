@@ -42,3 +42,11 @@ doc_events = {
 app_include_js = [
     "/assets/npd_management/js/bom_nutrition.js",
 ]
+
+override_doctype_dashboards = {
+    "Item": "npd_management.npd_management.item_dashboard.get_data"
+}
+
+doctype_js = {
+    "Item": "public/js/item.js"
+}

@@ -81,12 +81,21 @@
             "is_custom_field": null
         },
         {
+            "fieldname": "item_doctype",
+            "fieldtype": "Select",
+            "label": "Item Doctype",
+            "options": "NPD Item\nItem",
+            "default": "NPD Item",
+            "in_list_view": 1,
+            "idx": 2
+        },
+        {
             "doctype": "DocField",
-            "idx": 2,
+            "idx": 3,
             "fieldname": "item_code",
             "label": "Item Code",
-            "fieldtype": "Link",
-            "options": "NPD Item",
+            "fieldtype": "Dynamic Link",
+            "options": "item_doctype",
             "search_index": 0,
             "hidden": 0,
             "set_only_once": 0,
@@ -131,7 +140,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 3,
+            "idx": 4,
             "fieldname": "source_warehouse",
             "label": "Source Warehouse",
             "fieldtype": "Link",
@@ -175,7 +184,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 4,
+            "idx": 5,
             "fieldname": "column_break_3",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -217,7 +226,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 5,
+            "idx": 6,
             "fieldname": "item_name",
             "label": "Item Name",
             "fieldtype": "Data",
@@ -260,7 +269,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 6,
+            "idx": 7,
             "fieldname": "description",
             "label": "Description",
             "fieldtype": "Text",
@@ -303,7 +312,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 7,
+            "idx": 8,
             "fieldname": "allow_alternative_item",
             "label": "Allow Alternative Item",
             "fieldtype": "Check",
@@ -347,7 +356,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 8,
+            "idx": 9,
             "fieldname": "include_item_in_manufacturing",
             "label": "Include Item In Manufacturing",
             "fieldtype": "Check",
@@ -391,7 +400,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 9,
+            "idx": 10,
             "fieldname": "qty_section",
             "label": "Qty",
             "fieldtype": "Section Break",
@@ -434,7 +443,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 10,
+            "idx": 11,
             "fieldname": "required_qty",
             "label": "Required Qty",
             "fieldtype": "Float",
@@ -477,7 +486,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 11,
+            "idx": 12,
             "fieldname": "rate",
             "label": "Rate",
             "fieldtype": "Currency",
@@ -520,7 +529,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 12,
+            "idx": 13,
             "fieldname": "amount",
             "label": "Amount",
             "fieldtype": "Currency",
@@ -563,7 +572,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 13,
+            "idx": 14,
             "fieldname": "column_break_11",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -605,7 +614,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 14,
+            "idx": 15,
             "fieldname": "transferred_qty",
             "label": "Transferred Qty",
             "fieldtype": "Float",
@@ -649,7 +658,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 15,
+            "idx": 16,
             "fieldname": "consumed_qty",
             "label": "Consumed Qty",
             "fieldtype": "Float",
@@ -693,7 +702,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 16,
+            "idx": 17,
             "fieldname": "available_qty_at_source_warehouse",
             "label": "Available Qty at Source Warehouse",
             "fieldtype": "Float",
@@ -736,7 +745,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 17,
+            "idx": 18,
             "fieldname": "available_qty_at_wip_warehouse",
             "label": "Available Qty at WIP Warehouse",
             "fieldtype": "Float",

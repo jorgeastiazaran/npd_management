@@ -9,7 +9,7 @@
     "module": "npd_management",
     "autoname": "naming_series:",
     "title_field": "production_item",
-    "image_field": "image",
+    "image_field": "",
     "sort_field": "modified",
     "sort_order": "ASC",
     "read_only": 0,
@@ -178,14 +178,23 @@
             "linked_document_type": null
         },
         {
+            "fieldname": "item_doctype",
+            "fieldtype": "Select",
+            "label": "Item Doctype",
+            "options": "NPD Item\nItem",
+            "default": "NPD Item",
+            "reqd": 1,
+            "idx": 4
+        },
+        {
             "doctype": "DocField",
-            "idx": 4,
+            "idx": 5,
             "fieldname": "production_item",
             "label": "Item To Manufacture",
             "oldfieldname": "production_item",
-            "fieldtype": "Link",
+            "fieldtype": "Dynamic Link",
             "oldfieldtype": "Link",
-            "options": "NPD Item",
+            "options": "item_doctype",
             "search_index": 0,
             "hidden": 0,
             "set_only_once": 0,
@@ -230,7 +239,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 5,
+            "idx": 6,
             "fieldname": "item_name",
             "label": "Item Name",
             "fieldtype": "Data",
@@ -275,7 +284,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 6,
+            "idx": 7,
             "fieldname": "bom_no",
             "label": "BOM No",
             "oldfieldname": "bom_no",
@@ -324,7 +333,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 7,
+            "idx": 8,
             "fieldname": "column_break1",
             "fieldtype": "Column Break",
             "oldfieldtype": "Column Break",
@@ -368,7 +377,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 8,
+            "idx": 9,
             "fieldname": "company",
             "label": "Company",
             "oldfieldname": "company",
@@ -414,7 +423,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 9,
+            "idx": 10,
             "fieldname": "qty",
             "label": "Qty To Manufacture",
             "oldfieldname": "qty",
@@ -460,7 +469,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 10,
+            "idx": 11,
             "fieldname": "material_transferred_for_manufacturing",
             "label": "Material Transferred for Manufacturing",
             "fieldtype": "Float",
@@ -505,7 +514,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 11,
+            "idx": 12,
             "fieldname": "produced_qty",
             "label": "Manufactured Qty",
             "oldfieldname": "produced_qty",
@@ -552,7 +561,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 12,
+            "idx": 13,
             "fieldname": "process_loss_qty",
             "label": "Process Loss Qty",
             "fieldtype": "Float",
@@ -596,7 +605,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 13,
+            "idx": 14,
             "fieldname": "sales_order",
             "label": "Sales Order",
             "fieldtype": "Link",
@@ -648,7 +657,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 14,
+            "idx": 15,
             "fieldname": "project",
             "label": "Project",
             "oldfieldname": "project",
@@ -700,7 +709,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 15,
+            "idx": 16,
             "fieldname": "serial_no_and_batch_for_finished_good_section",
             "label": "Serial No and Batch for Finished Good",
             "fieldtype": "Section Break",
@@ -744,7 +753,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 16,
+            "idx": 17,
             "fieldname": "has_serial_no",
             "label": "Has Serial No",
             "fieldtype": "Check",
@@ -789,7 +798,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 17,
+            "idx": 18,
             "fieldname": "has_batch_no",
             "label": "Has Batch No",
             "fieldtype": "Check",
@@ -834,7 +843,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 18,
+            "idx": 19,
             "fieldname": "column_break_17",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -876,7 +885,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 19,
+            "idx": 20,
             "fieldname": "serial_no",
             "label": "Serial Nos",
             "fieldtype": "Small Text",
@@ -920,7 +929,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 20,
+            "idx": 21,
             "fieldname": "batch_size",
             "label": "Batch Size",
             "fieldtype": "Float",
@@ -965,7 +974,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 21,
+            "idx": 22,
             "fieldname": "settings_section",
             "label": "Settings",
             "fieldtype": "Section Break",
@@ -1008,7 +1017,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 22,
+            "idx": 23,
             "fieldname": "allow_alternative_item",
             "label": "Allow Alternative Item",
             "fieldtype": "Check",
@@ -1052,7 +1061,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 23,
+            "idx": 24,
             "fieldname": "use_multi_level_bom",
             "label": "Use Multi-Level BOM",
             "fieldtype": "Check",
@@ -1097,7 +1106,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 24,
+            "idx": 25,
             "fieldname": "column_break_18",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -1139,7 +1148,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 25,
+            "idx": 26,
             "fieldname": "skip_transfer",
             "label": "Skip Material Transfer to WIP Warehouse",
             "fieldtype": "Check",
@@ -1184,7 +1193,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 26,
+            "idx": 27,
             "fieldname": "from_wip_warehouse",
             "label": "Backflush Raw Materials From Work-in-Progress Warehouse",
             "fieldtype": "Check",
@@ -1229,7 +1238,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 27,
+            "idx": 28,
             "fieldname": "update_consumed_material_cost_in_project",
             "label": "Update Consumed Material Cost In Project",
             "fieldtype": "Check",
@@ -1273,7 +1282,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 28,
+            "idx": 29,
             "fieldname": "warehouses",
             "label": "Warehouses",
             "fieldtype": "Section Break",
@@ -1317,7 +1326,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 29,
+            "idx": 30,
             "fieldname": "source_warehouse",
             "label": "Source Warehouse",
             "fieldtype": "Link",
@@ -1362,7 +1371,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 30,
+            "idx": 31,
             "fieldname": "wip_warehouse",
             "label": "Work-in-Progress Warehouse",
             "fieldtype": "Link",
@@ -1408,7 +1417,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 31,
+            "idx": 32,
             "fieldname": "column_break_12",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -1450,7 +1459,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 32,
+            "idx": 33,
             "fieldname": "fg_warehouse",
             "label": "Target Warehouse",
             "fieldtype": "Link",
@@ -1495,7 +1504,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 33,
+            "idx": 34,
             "fieldname": "scrap_warehouse",
             "label": "Scrap Warehouse",
             "fieldtype": "Link",
@@ -1540,7 +1549,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 34,
+            "idx": 35,
             "fieldname": "required_items_section",
             "label": "Required Items",
             "fieldtype": "Section Break",
@@ -1583,7 +1592,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 35,
+            "idx": 36,
             "fieldname": "required_items",
             "label": "Required Items",
             "fieldtype": "Table",
@@ -1627,7 +1636,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 36,
+            "idx": 37,
             "fieldname": "time",
             "label": "Time",
             "fieldtype": "Section Break",
@@ -1671,7 +1680,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 37,
+            "idx": 38,
             "fieldname": "planned_start_date",
             "label": "Planned Start Date",
             "fieldtype": "Datetime",
@@ -1715,7 +1724,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 38,
+            "idx": 39,
             "fieldname": "planned_end_date",
             "label": "Planned End Date",
             "fieldtype": "Datetime",
@@ -1759,7 +1768,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 39,
+            "idx": 40,
             "fieldname": "expected_delivery_date",
             "label": "Expected Delivery Date",
             "fieldtype": "Date",
@@ -1802,7 +1811,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 40,
+            "idx": 41,
             "fieldname": "column_break_13",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -1844,7 +1853,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 41,
+            "idx": 42,
             "fieldname": "actual_start_date",
             "label": "Actual Start Date",
             "fieldtype": "Datetime",
@@ -1888,7 +1897,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 42,
+            "idx": 43,
             "fieldname": "actual_end_date",
             "label": "Actual End Date",
             "fieldtype": "Datetime",
@@ -1932,7 +1941,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 43,
+            "idx": 44,
             "fieldname": "lead_time",
             "label": "Lead Time",
             "fieldtype": "Float",
@@ -1976,7 +1985,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 44,
+            "idx": 45,
             "fieldname": "operations_section",
             "label": "Operations",
             "fieldtype": "Section Break",
@@ -2020,7 +2029,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 45,
+            "idx": 46,
             "fieldname": "transfer_material_against",
             "label": "Transfer Material Against",
             "fieldtype": "Select",
@@ -2066,7 +2075,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 46,
+            "idx": 47,
             "fieldname": "operations",
             "label": "Operations",
             "fieldtype": "Table",
@@ -2110,7 +2119,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 47,
+            "idx": 48,
             "fieldname": "section_break_22",
             "label": "Operation Cost",
             "fieldtype": "Section Break",
@@ -2154,7 +2163,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 48,
+            "idx": 49,
             "fieldname": "planned_operating_cost",
             "label": "Planned Operating Cost",
             "fieldtype": "Currency",
@@ -2198,7 +2207,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 49,
+            "idx": 50,
             "fieldname": "actual_operating_cost",
             "label": "Actual Operating Cost",
             "fieldtype": "Currency",
@@ -2242,7 +2251,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 50,
+            "idx": 51,
             "fieldname": "additional_operating_cost",
             "label": "Additional Operating Cost",
             "fieldtype": "Currency",
@@ -2286,7 +2295,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 51,
+            "idx": 52,
             "fieldname": "column_break_24",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -2328,7 +2337,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 52,
+            "idx": 53,
             "fieldname": "corrective_operation_cost",
             "label": "Corrective Operation Cost",
             "fieldtype": "Currency",
@@ -2372,7 +2381,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 53,
+            "idx": 54,
             "fieldname": "total_operating_cost",
             "label": "Total Operating Cost",
             "fieldtype": "Currency",
@@ -2416,7 +2425,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 54,
+            "idx": 55,
             "fieldname": "more_info",
             "label": "More Information",
             "fieldtype": "Section Break",
@@ -2460,7 +2469,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 55,
+            "idx": 56,
             "fieldname": "description",
             "label": "Item Description",
             "fieldtype": "Small Text",
@@ -2503,7 +2512,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 56,
+            "idx": 57,
             "fieldname": "stock_uom",
             "label": "Stock UOM",
             "oldfieldname": "stock_uom",
@@ -2549,7 +2558,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 57,
+            "idx": 58,
             "fieldname": "column_break2",
             "fieldtype": "Column Break",
             "search_index": 0,
@@ -2592,7 +2601,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 58,
+            "idx": 59,
             "fieldname": "material_request",
             "label": "Material Request",
             "fieldtype": "Link",
@@ -2640,7 +2649,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 59,
+            "idx": 60,
             "fieldname": "production_plan",
             "label": "Production Plan",
             "fieldtype": "Link",
@@ -2684,7 +2693,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 60,
+            "idx": 61,
             "fieldname": "production_plan_item",
             "label": "Production Plan Item",
             "fieldtype": "Data",
@@ -2727,7 +2736,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 61,
+            "idx": 62,
             "fieldname": "production_plan_sub_assembly_item",
             "label": "Production Plan Sub-assembly Item",
             "fieldtype": "Data",
@@ -2770,7 +2779,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 62,
+            "idx": 63,
             "fieldname": "product_bundle_item",
             "label": "Product Bundle Item",
             "fieldtype": "Link",
@@ -2819,7 +2828,7 @@
         },
         {
             "doctype": "DocField",
-            "idx": 63,
+            "idx": 64,
             "fieldname": "amended_from",
             "label": "Amended From",
             "oldfieldname": "amended_from",
