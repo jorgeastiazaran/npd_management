@@ -23,7 +23,22 @@ frappe.ui.form.on("NPD Item", {
                                     frappe.hide_progress();
                                     if (r.exc) return;
                                     let item_data = r.message;
-                                    frappe.new_doc("Item", item_data);
+                                    frappe.model.with_doctype("Item", function() {
+                                        let doc = frappe.model.get_new_doc("Item");
+                                        
+                                        $.each(item_data, function(k, v) {
+                                            if (Array.isArray(v)) {
+                                                v.forEach(function(row_data) {
+                                                    let child = frappe.model.add_child(doc, k);
+                                                    $.extend(child, row_data);
+                                                });
+                                            } else if (k !== 'doctype' && k !== 'name') {
+                                                doc[k] = v;
+                                            }
+                                        });
+                                        
+                                        frappe.set_route("Form", "Item", doc.name);
+                                    });
                                 }
                             });
                         }

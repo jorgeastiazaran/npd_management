@@ -42,7 +42,22 @@ npd_mgmt.open_promote_form = function(frm, opts) {
                 frappe.hide_progress();
                 if (r.exc || !r.message) return;
 
-                frappe.new_doc(opts.target_doctype, r.message);
+                frappe.model.with_doctype(opts.target_doctype, function() {
+                    let doc = frappe.model.get_new_doc(opts.target_doctype);
+                    
+                    $.each(r.message, function(k, v) {
+                        if (Array.isArray(v)) {
+                            v.forEach(function(row_data) {
+                                let child = frappe.model.add_child(doc, k);
+                                $.extend(child, row_data);
+                            });
+                        } else if (k !== 'doctype' && k !== 'name') {
+                            doc[k] = v;
+                        }
+                    });
+                    
+                    frappe.set_route("Form", opts.target_doctype, doc.name);
+                });
             },
             error: function() {
                 frappe.hide_progress();
