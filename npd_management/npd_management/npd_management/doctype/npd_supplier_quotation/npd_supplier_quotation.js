@@ -5,7 +5,8 @@ frappe.ui.form.on("NPD Supplier Quotation", {
                 frappe.confirm(
                     __("Are you sure you want to promote this to a standard Supplier Quotation?"),
                     () => {
-                        npd_mgmt.open_promote_form(frm, {
+                        frappe.require("/assets/npd_management/js/npd_promotion.js", function() {
+npd_mgmt.open_promote_form(frm, {
                         target_doctype: "Supplier Quotation",
                         api_method: "npd_management.npd_management.doctype.npd_supplier_quotation.npd_supplier_quotation.get_promotion_data",
                     }) => frm.reload_doc());
@@ -15,3 +16,4 @@ frappe.ui.form.on("NPD Supplier Quotation", {
         }
     }
 });
+                });

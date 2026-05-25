@@ -6,10 +6,12 @@ frappe.ui.form.on('NPD Quotation', {
         // Gated pipeline button: visible only in Approved state when unpromoted
         if (frm.doc.status === 'Approved' && !frm.doc.is_promoted) {
             frm.add_custom_button(__('Promote to Sales Quotation'), function() {
-                npd_mgmt.open_promote_form(frm, {
+                frappe.require("/assets/npd_management/js/npd_promotion.js", function() {
+npd_mgmt.open_promote_form(frm, {
                     target_doctype: "Quotation",
                     api_method: "npd_management.npd_management.doctype.npd_quotation.npd_quotation.get_promotion_data",
                     confirm_msg: __("This will open a new <b>Sales Quotation</b> form pre-filled with data from <b>{0}</b>. All NPD Items must already be promoted. Review and save to complete.", [frm.doc.name]),
+                });
                 });
             }).addClass('btn-primary');
         }

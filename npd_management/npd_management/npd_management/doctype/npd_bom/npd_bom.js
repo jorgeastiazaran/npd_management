@@ -5,10 +5,12 @@ frappe.ui.form.on("NPD BOM", {
     refresh: function(frm) {
         if (!frm.doc.__islocal && frm.doc.docstatus === 1 && !frm.doc.is_promoted) {
             frm.add_custom_button(__("Promote to BOM"), function() {
-                npd_mgmt.open_promote_form(frm, {
+                frappe.require("/assets/npd_management/js/npd_promotion.js", function() {
+npd_mgmt.open_promote_form(frm, {
                     target_doctype: "BOM",
                     api_method: "npd_management.npd_management.doctype.npd_bom.npd_bom.get_promotion_data",
                     confirm_msg: __("This will open a new <b>BOM</b> form pre-filled with data from <b>{0}</b>. Review and save to complete the promotion.", [frm.doc.name]),
+                });
                 });
             }).addClass("btn-primary");
         }

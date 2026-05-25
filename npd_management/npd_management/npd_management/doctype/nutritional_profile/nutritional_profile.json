@@ -1,0 +1,283 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-05-22 14:46:08.400451",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "reference_doctype",
+  "reference_name",
+  "item_name",
+  "col_break_header",
+  "is_default",
+  "is_locked",
+  "reference_quantity_g",
+  "include_in_nutrient_calc",
+  "amended_from",
+  "section_nutrients",
+  "energy_col",
+  "contenido_energetico_kcal",
+  "contenido_energetico_kj",
+  "col_break_macros",
+  "grasas_g",
+  "grasas_saturadas_g",
+  "grasas_trans_g",
+  "carbohidratos_g",
+  "azucares_g",
+  "azucares_anadidos_g",
+  "proteinas_g",
+  "sodio_mg",
+  "fibra_dietetica_g",
+  "section_micros",
+  "colesterol_mg",
+  "col_break_micros",
+  "calcio_mg",
+  "hierro_mg",
+  "potasio_mg",
+  "vit_d_ug",
+  "naming_series"
+ ],
+ "fields": [
+  {
+   "default": "Item",
+   "fieldname": "reference_doctype",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reference Document Type",
+   "options": "Item\nNPD Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Reference Item",
+   "options": "reference_doctype",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Only one profile per item can be the default. Setting this will clear it from other profiles of the same item.",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Default Profile"
+  },
+  {
+   "default": "0",
+   "description": "Automatically locked when referenced by a submitted NPD BOM. Locked profiles cannot be edited.",
+   "fieldname": "is_locked",
+   "fieldtype": "Check",
+   "label": "Locked",
+   "read_only": 1
+  },
+  {
+   "default": "100",
+   "description": "The weight in grams that all nutrient values below are based on (default: 100g)",
+   "fieldname": "reference_quantity_g",
+   "fieldtype": "Float",
+   "label": "Reference Quantity (g)",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "description": "If unchecked, this item will not contribute to nutritional rollup in any NPD BOM",
+   "fieldname": "include_in_nutrient_calc",
+   "fieldtype": "Check",
+   "label": "Include in Nutrient Calculation"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Nutritional Profile",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_nutrients",
+   "fieldtype": "Section Break",
+   "label": "Nutritional Values (per reference quantity)"
+  },
+  {
+   "fieldname": "energy_col",
+   "fieldtype": "Column Break",
+   "label": "Energy"
+  },
+  {
+   "default": "0",
+   "fieldname": "contenido_energetico_kcal",
+   "fieldtype": "Float",
+   "label": "Contenido Energ\u00e9tico (kcal)"
+  },
+  {
+   "default": "0",
+   "fieldname": "contenido_energetico_kj",
+   "fieldtype": "Float",
+   "label": "Contenido Energ\u00e9tico (kJ)"
+  },
+  {
+   "fieldname": "col_break_macros",
+   "fieldtype": "Column Break",
+   "label": "Macronutrients"
+  },
+  {
+   "default": "0",
+   "fieldname": "grasas_g",
+   "fieldtype": "Float",
+   "label": "Grasas (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "grasas_saturadas_g",
+   "fieldtype": "Float",
+   "label": "Grasas Saturadas (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "grasas_trans_g",
+   "fieldtype": "Float",
+   "label": "Grasas Trans (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "carbohidratos_g",
+   "fieldtype": "Float",
+   "label": "Carbohidratos (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "azucares_g",
+   "fieldtype": "Float",
+   "label": "Az\u00facares (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "azucares_anadidos_g",
+   "fieldtype": "Float",
+   "label": "Az\u00facares A\u00f1adidos (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "proteinas_g",
+   "fieldtype": "Float",
+   "label": "Prote\u00ednas (g)"
+  },
+  {
+   "default": "0",
+   "fieldname": "sodio_mg",
+   "fieldtype": "Float",
+   "label": "Sodio (mg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "fibra_dietetica_g",
+   "fieldtype": "Float",
+   "label": "Fibra Diet\u00e9tica (g)"
+  },
+  {
+   "fieldname": "section_micros",
+   "fieldtype": "Section Break",
+   "label": "Micronutrients"
+  },
+  {
+   "default": "0",
+   "fieldname": "colesterol_mg",
+   "fieldtype": "Float",
+   "label": "Colesterol (mg)"
+  },
+  {
+   "fieldname": "col_break_micros",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "calcio_mg",
+   "fieldtype": "Float",
+   "label": "Calcio (mg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "hierro_mg",
+   "fieldtype": "Float",
+   "label": "Hierro (mg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "potasio_mg",
+   "fieldtype": "Float",
+   "label": "Potasio (mg)"
+  },
+  {
+   "default": "0",
+   "fieldname": "vit_d_ug",
+   "fieldtype": "Float",
+   "label": "Vit D (ug)"
+  },
+  {
+   "default": "NUTR-.######",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Naming Series",
+   "options": "NUTR-.######",
+   "print_hide": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-05-22 15:30:08.027328",
+ "modified_by": "Administrator",
+ "module": "npd_management",
+ "name": "Nutritional Profile",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
