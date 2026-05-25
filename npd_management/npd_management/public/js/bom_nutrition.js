@@ -3,7 +3,7 @@ frappe.ui.form.on("BOM", {
         if (frm.doc.docstatus === 0 && !frm.doc.nutritional_snapshot_locked) {
             frm.add_custom_button(__("Calculate Nutritional Info"), function() {
                 frappe.call({
-                    method: "npd_management.bom_nutrition.recalculate_bom_nutrition",
+                    method: "npd_management.npd_management.bom_nutrition.recalculate_bom_nutrition",
                     args: { bom_name: frm.doc.name },
                     freeze: true,
                     callback: function(r) {
@@ -25,12 +25,10 @@ frappe.ui.form.on("BOM", {
         if (frm.doc.nutritional_snapshot_locked || !frm.doc.items || !frm.doc.items.length) {
             return;
         }
-        if (frm.doc.__islocal) {
-            return;
-        }
+
         
         frappe.call({
-            method: "npd_management.bom_nutrition.check_kg_conversions",
+            method: "npd_management.npd_management.bom_nutrition.check_kg_conversions",
             args: { items_json: JSON.stringify(frm.doc.items) },
             callback: function(r) {
                 let missing = r.message || [];
@@ -59,7 +57,7 @@ frappe.ui.form.on("BOM", {
                             });
                             
                             frappe.call({
-                                method: "npd_management.bom_nutrition.save_kg_conversions",
+                                method: "npd_management.npd_management.bom_nutrition.save_kg_conversions",
                                 args: { conversions: JSON.stringify(conversions) },
                                 freeze: true,
                                 callback: function(r2) {
@@ -78,11 +76,25 @@ frappe.ui.form.on("BOM", {
     },
     _do_recalculate: function(frm) {
         frappe.call({
-            method: "npd_management.bom_nutrition.recalculate_bom_nutrition",
-            args: { bom_name: frm.doc.name },
+            method: "npd_management.npd_management.bom_nutrition.calculate_nutrition_for_doc",
+            args: { doc_json: JSON.stringify(frm.doc) },
             callback: function(r) {
-                if (!r.exc) {
-                    frm.reload_doc();
+                if (!r.exc && r.message) {
+                    let totals = r.message.totals;
+                    for (let key in totals) {
+                        if (key === "total_yield_kg" && frm.fields_dict.npdi_total_yield_kg) {
+                            frm.set_value("npdi_total_yield_kg", totals[key]);
+                        } else if (frm.fields_dict[key]) {
+                            frm.set_value(key, totals[key]);
+                        }
+                    }
+                    if (r.message.warnings && r.message.warnings.length > 0) {
+                        frappe.msgprint({
+                            title: __('Reference Quantity Discrepancy'),
+                            indicator: 'orange',
+                            message: r.message.warnings.join('<br><br>')
+                        });
+                    }
                 }
             }
         });

@@ -87,3 +87,22 @@ def recalculate_bom_nutrition(bom_name):
     calculate_nutrition(doc)
     doc.save()
     return doc.as_dict()
+
+@frappe.whitelist()
+def calculate_nutrition_for_doc(doc_json):
+    """Dynamic calculation of nutrition for an unsaved BOM document."""
+    import json
+    from npd_management.utils.nutritional_rollup import rollup_nutrition
+    doc_dict = json.loads(doc_json)
+    
+    totals = rollup_nutrition(
+        doc_dict.get("items", []),
+        item_doctype_key="item_doctype",
+        default_item_doctype="Item",
+    )
+    warnings = totals.pop("warnings", [])
+    
+    return {
+        "totals": totals,
+        "warnings": warnings
+    }
