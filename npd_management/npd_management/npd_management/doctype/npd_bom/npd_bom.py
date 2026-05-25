@@ -276,3 +276,7 @@ class NPDBOM(Document):
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "NPD BOM Promotion Error")
             frappe.throw(f"Failed to promote BOM: {str(e)}")
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDBOM.get_promotion_data

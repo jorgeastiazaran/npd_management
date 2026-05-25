@@ -25,3 +25,7 @@ class NPDSupplier(Document):
         data["custom_npd_supplier_reference"] = npd.name
         return data
 
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDSupplier.get_promotion_data

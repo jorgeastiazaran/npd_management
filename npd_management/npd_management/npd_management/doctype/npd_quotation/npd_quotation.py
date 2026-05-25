@@ -150,3 +150,7 @@ def get_formula_estimated_cost(npd_item):
     # Final fallback check if NPD Item itself stores custom target base pricing
     item_doc = frappe.get_doc("NPD Item", npd_item)
     return flt(item_doc.get("valuation_rate")) or flt(item_doc.get("standard_rate")) or 0.0
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDQuotation.get_promotion_data

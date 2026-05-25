@@ -180,3 +180,7 @@ class NPDSupplierQuotation(Document):
             f"Supplier Quotation <b>{sq_doc.name}</b> created successfully.",
             alert=True
         )
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDSupplierQuotation.get_promotion_data

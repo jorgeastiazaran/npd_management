@@ -17,3 +17,7 @@ class NPDQualityInspectionTemplate(Document):
                                     child_table_fields=["item_quality_inspection_parameter"])
         data["custom_npd_qi_template_reference"] = npd.name
         return data
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDQualityInspectionTemplate.get_promotion_data

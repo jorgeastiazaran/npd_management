@@ -112,3 +112,7 @@ class NPDItem(Document):
             new_profile.reference_doctype = "Item"
             new_profile.reference_name = item_name
             new_profile.insert(ignore_permissions=True)
+
+
+# Expose the static method at the module level for frappe.call route
+get_promotion_data = NPDItem.get_promotion_data
