@@ -27,7 +27,10 @@ def get_kg_conversion_factor(item_code, item_doctype):
     Return the multiplier to convert stock_qty to Kg.
     Uses the explicit UOM conversion table where 1 Kg = X stock_uom.
     """
-    doc = frappe.get_doc(item_doctype, item_code)
+    try:
+        doc = frappe.get_doc(item_doctype, item_code)
+    except frappe.DoesNotExistError:
+        return 0.0
     if (doc.stock_uom or "").lower() == "kg":
         return 1.0
     for u in doc.get("uoms", []):
@@ -53,7 +56,11 @@ def check_missing_kg_conversions(items, item_doctype_key="item_doctype", default
             continue
 
         item_type = _row_attr(item, item_doctype_key) or default_item_doctype
-        doc = frappe.get_doc(item_type, item_code)
+        try:
+            doc = frappe.get_doc(item_type, item_code)
+        except frappe.DoesNotExistError:
+            seen.add(item_code)
+            continue
 
         if (doc.stock_uom or "").lower() == "kg":
             seen.add(item_code)
