@@ -23,10 +23,7 @@ frappe.ui.form.on("NPD Item", {
                                     frappe.hide_progress();
                                     if (r.exc) return;
                                     let item_data = r.message;
-                                    // Store the mapped data in route_options so the Item form
-                                    // picks it up when it opens
-                                    frappe.route_options = item_data;
-                                    frappe.set_route("Form", "Item", "new-item-1");
+                                    frappe.new_doc("Item", item_data);
                                 }
                             });
                         }

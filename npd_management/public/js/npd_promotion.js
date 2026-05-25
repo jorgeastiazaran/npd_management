@@ -42,8 +42,7 @@ npd_mgmt.open_promote_form = function(frm, opts) {
                 frappe.hide_progress();
                 if (r.exc || !r.message) return;
 
-                frappe.route_options = r.message;
-                frappe.set_route("Form", opts.target_doctype, new_doc_route);
+                frappe.new_doc(opts.target_doctype, r.message);
             },
             error: function() {
                 frappe.hide_progress();
