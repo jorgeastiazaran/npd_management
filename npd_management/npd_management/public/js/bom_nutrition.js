@@ -1,9 +1,14 @@
 frappe.ui.form.on("BOM", {
+    onload: function(frm) {
+        if (frm.doc.__islocal && frm.doc.items && frm.doc.items.length > 0) {
+            setTimeout(() => frm.trigger("calculate_nutritional_info"), 500);
+        }
+    },
     refresh: function(frm) {
         if (frm.doc.docstatus === 0 && !frm.doc.nutritional_snapshot_locked) {
             frm.add_custom_button(__("Calculate Nutritional Info"), function() {
                 frappe.call({
-                    method: "npd_management.npd_management.bom_nutrition.recalculate_bom_nutrition",
+                    method: "npd_management.bom_nutrition.recalculate_bom_nutrition",
                     args: { bom_name: frm.doc.name },
                     freeze: true,
                     callback: function(r) {
@@ -28,7 +33,7 @@ frappe.ui.form.on("BOM", {
 
         
         frappe.call({
-            method: "npd_management.npd_management.bom_nutrition.check_kg_conversions",
+            method: "npd_management.bom_nutrition.check_kg_conversions",
             args: { items_json: JSON.stringify(frm.doc.items) },
             callback: function(r) {
                 let missing = r.message || [];
@@ -57,7 +62,7 @@ frappe.ui.form.on("BOM", {
                             });
                             
                             frappe.call({
-                                method: "npd_management.npd_management.bom_nutrition.save_kg_conversions",
+                                method: "npd_management.bom_nutrition.save_kg_conversions",
                                 args: { conversions: JSON.stringify(conversions) },
                                 freeze: true,
                                 callback: function(r2) {
@@ -76,7 +81,7 @@ frappe.ui.form.on("BOM", {
     },
     _do_recalculate: function(frm) {
         frappe.call({
-            method: "npd_management.npd_management.bom_nutrition.calculate_nutrition_for_doc",
+            method: "npd_management.bom_nutrition.calculate_nutrition_for_doc",
             args: { doc_json: JSON.stringify(frm.doc) },
             callback: function(r) {
                 if (!r.exc && r.message) {
