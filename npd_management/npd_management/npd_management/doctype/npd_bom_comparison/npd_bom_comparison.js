@@ -27,7 +27,7 @@ frappe.ui.form.on('NPD BOM Comparison', {
         }
         
         frappe.call({
-            method: "npd_management.doctype.npd_bom_comparison.npd_bom_comparison.get_bom_comparison_json',
+            method: "npd_management.npd_management.doctype.npd_bom_comparison.npd_bom_comparison.get_bom_comparison_json',
             args: {
                 base_bom: frm.doc.base_bom,
                 compare_bom: frm.doc.compare_bom

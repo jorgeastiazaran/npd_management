@@ -4,7 +4,7 @@
  * Usage in any NPD doctype JS:
  *   npd_mgmt.open_promote_form(frm, {
  *       target_doctype: "Item",
- *       api_method: "npd_management.doctype.npd_item.npd_item.get_promotion_data",
+ *       api_method: "npd_management.npd_management.doctype.npd_item.npd_item.get_promotion_data",
  *       confirm_msg: "Promote this NPD Item to a live ERPNext Item?",
  *       target_route_key: "item",   // used to build "new-item-1"
  *   });

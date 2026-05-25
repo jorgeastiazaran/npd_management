@@ -17,7 +17,7 @@ frappe.ui.form.on("NPD Item", {
                         function() {
                             frappe.show_progress(__("Preparing Item..."), 30, 100);
                             frappe.call({
-                                method: "npd_management.doctype.npd_item.npd_item.get_promotion_data",
+                                method: "npd_management.npd_management.doctype.npd_item.npd_item.get_promotion_data",
                                 args: { npd_item_name: frm.doc.name },
                                 callback: function(r) {
                                     frappe.hide_progress();

@@ -9,7 +9,7 @@ frappe.ui.form.on('NPD Supplier', {
                         function() {
                             npd_mgmt.open_promote_form(frm, {
                         target_doctype: "Supplier",
-                        api_method: "npd_management.doctype.npd_supplier.npd_supplier.get_promotion_data",
+                        api_method: "npd_management.npd_management.doctype.npd_supplier.npd_supplier.get_promotion_data",
                     });
                         }
                     );
