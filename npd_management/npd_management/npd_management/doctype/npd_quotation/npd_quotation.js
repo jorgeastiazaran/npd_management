@@ -8,7 +8,7 @@ frappe.ui.form.on('NPD Quotation', {
             frm.add_custom_button(__('Promote to Sales Quotation'), function() {
                 npd_mgmt.open_promote_form(frm, {
                     target_doctype: "Quotation",
-                    api_method: "npd_management.npd_management.npd_management.doctype.npd_quotation.npd_quotation.get_promotion_data",
+                    api_method: "npd_management.doctype.npd_quotation.npd_quotation.get_promotion_data",
                     confirm_msg: __("This will open a new <b>Sales Quotation</b> form pre-filled with data from <b>{0}</b>. All NPD Items must already be promoted. Review and save to complete.", [frm.doc.name]),
                 });
             }).addClass('btn-primary');
@@ -25,7 +25,7 @@ frappe.ui.form.on('NPD Quotation Item', {
         let row = frappe.get_doc(cdt, cdn);
         if (row.npd_item) {
             frappe.call({
-                method: 'npd_management.doctype.npd_quotation.npd_quotation.get_formula_estimated_cost',
+                method: "npd_management.doctype.npd_quotation.npd_quotation.get_formula_estimated_cost',
                 args: { npd_item: row.npd_item },
                 callback: function(r) {
                     if (!r.exc && r.message !== undefined) {
