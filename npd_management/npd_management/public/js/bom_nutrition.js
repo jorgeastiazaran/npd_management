@@ -32,9 +32,20 @@ frappe.ui.form.on("BOM", {
         }
 
         
+        let safe_items = (frm.doc.items || []).map(row => {
+            return {
+                item_code: row.item_code,
+                item_doctype: row.item_doctype || "Item",
+                stock_uom: row.stock_uom,
+                include_in_nutrient_calc: row.include_in_nutrient_calc,
+                weight_per_unit: row.weight_per_unit,
+                weight_uom: row.weight_uom
+            };
+        });
+        
         frappe.call({
             method: "npd_management.bom_nutrition.check_kg_conversions",
-            args: { items_json: JSON.stringify(frm.doc.items) },
+            args: { items_json: JSON.stringify(safe_items) },
             callback: function(r) {
                 let missing = r.message || [];
                 if (missing.length > 0) {
@@ -80,9 +91,25 @@ frappe.ui.form.on("BOM", {
         });
     },
     _do_recalculate: function(frm) {
+        let safe_items = (frm.doc.items || []).map(row => {
+            return {
+                item_code: row.item_code,
+                item_doctype: row.item_doctype || "Item",
+                qty: row.qty,
+                stock_qty: row.stock_qty,
+                conversion_factor: row.conversion_factor,
+                include_in_nutrient_calc: row.include_in_nutrient_calc
+            };
+        });
+        
+        let safe_doc = {
+            items: safe_items,
+            npdi_reference_quantity_g: frm.doc.npdi_reference_quantity_g
+        };
+
         frappe.call({
             method: "npd_management.bom_nutrition.calculate_nutrition_for_doc",
-            args: { doc_json: JSON.stringify(frm.doc) },
+            args: { doc_json: JSON.stringify(safe_doc) },
             callback: function(r) {
                 if (!r.exc && r.message) {
                     let totals = r.message.totals;

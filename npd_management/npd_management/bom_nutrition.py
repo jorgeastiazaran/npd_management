@@ -99,6 +99,7 @@ def calculate_nutrition_for_doc(doc_json):
         doc_dict.get("items", []),
         item_doctype_key="item_doctype",
         default_item_doctype="Item",
+        parent_ref_qty=doc_dict.get("npdi_reference_quantity_g", 100.0)
     )
     warnings = totals.pop("warnings", [])
     
