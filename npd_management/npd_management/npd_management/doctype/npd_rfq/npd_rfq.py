@@ -10,25 +10,6 @@ class NPDRFQ(Document):
     def on_cancel(self):
         self.status = "Cancelled"
 
-
-    @frappe.whitelist()
-    @staticmethod
-    def get_promotion_data(npd_item_name):
-        """Returns a clean dict mapped to Request for Quotation for full-form promotion."""
-        from npd_management.api.npd_promotion import build_promotion_data, strip_row_meta
-        npd = frappe.get_doc("NPD RFQ", npd_item_name)
-        if npd.get("is_promoted"):
-            frappe.throw(f"NPD RFQ <b>{npd_item_name}</b> has already been promoted.")
-        if npd.docstatus != 1:
-            frappe.throw("Please submit the NPD RFQ before promoting.")
-
-        _EXCLUDE = {"is_promoted", "linked_rfq"}
-        data = build_promotion_data(npd, "Request for Quotation",
-                                    extra_exclude=_EXCLUDE,
-                                    child_table_fields=["suppliers", "items"])
-        data["custom_npd_rfq_reference"] = npd.name
-        return data
-
     @frappe.whitelist()
     def create_npd_supplier_quotations(self):
         """Creates one NPD Supplier Quotation per supplier in this NPD RFQ."""

@@ -208,28 +208,16 @@ def get_custom_fields():
                 "description": "Reference to the NPD Quotation this record was promoted from.",
             }
         ],
-        "Request for Quotation": [
+        "Quality Inspection Template": [
             {
-                "fieldname": "custom_npd_rfq_reference",
-                "label": "NPD RFQ Reference",
+                "fieldname": "custom_npd_qi_template_reference",
+                "label": "NPD Quality Inspection Template Reference",
                 "fieldtype": "Link",
-                "options": "NPD RFQ",
-                "insert_after": "company",
+                "options": "NPD Quality Inspection Template",
+                "insert_after": "quality_inspection_template_name",
                 "no_copy": 1,
                 "read_only": 1,
-                "description": "Reference to the NPD RFQ this record was promoted from.",
-            }
-        ],
-        "Quality Inspection": [
-            {
-                "fieldname": "custom_npd_qi_reference",
-                "label": "NPD Quality Inspection Reference",
-                "fieldtype": "Link",
-                "options": "NPD Quality Inspection",
-                "insert_after": "status",
-                "no_copy": 1,
-                "read_only": 1,
-                "description": "Reference to the NPD Quality Inspection this record was promoted from.",
+                "description": "Reference to the NPD Quality Inspection Template this record was promoted from.",
             }
         ],
     }

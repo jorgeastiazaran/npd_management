@@ -47,11 +47,8 @@ doc_events = {
     "Quotation": {
         "after_insert": "npd_management.api.npd_utils.link_promoted_quotation",
     },
-    "Request for Quotation": {
-        "after_insert": "npd_management.api.npd_utils.link_promoted_rfq",
-    },
-    "Quality Inspection": {
-        "after_insert": "npd_management.api.npd_utils.link_promoted_qi",
+    "Quality Inspection Template": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_qi_template",
     },
 }
 

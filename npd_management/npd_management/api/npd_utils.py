@@ -184,7 +184,7 @@ def link_promoted_bom(doc, method=None):
 
 
 def link_promoted_supplier(doc, method=None):
-    """After-insert hook: mark NPD Supplier as promoted and cascade eligible Supplier Quotations."""
+    """After-insert hook: mark NPD Supplier as promoted."""
     ref_value = doc.get("custom_npd_supplier_reference")
     if not ref_value or not frappe.db.exists("NPD Supplier", ref_value):
         return
@@ -193,12 +193,6 @@ def link_promoted_supplier(doc, method=None):
     npd_supplier.linked_supplier = doc.name
     npd_supplier.save(ignore_permissions=True)
     frappe.logger().info(f"Linked NPD Supplier {ref_value} → {doc.name}")
-
-    # Cascade: auto-promote any fully-ready NPD Supplier Quotations
-    try:
-        npd_supplier._promote_eligible_quotations(doc.name)
-    except Exception:
-        frappe.log_error(frappe.get_traceback(), "NPD Supplier cascade SQ promotion error")
 
 
 def link_promoted_supplier_quotation(doc, method=None):
@@ -219,11 +213,7 @@ def link_promoted_quotation(doc, method=None):
     frappe.logger().info(f"Linked NPD Quotation {ref_value} → {doc.name}")
 
 
-def link_promoted_rfq(doc, method=None):
-    """After-insert hook: mark NPD RFQ as promoted."""
-    _mark_promoted("NPD RFQ", "custom_npd_rfq_reference", doc, "linked_rfq", doc.name)
+def link_promoted_qi_template(doc, method=None):
+    """After-insert hook: mark NPD Quality Inspection Template as promoted."""
+    _mark_promoted("NPD Quality Inspection Template", "custom_npd_qi_template_reference", doc, "linked_qi_template", doc.name)
 
-
-def link_promoted_qi(doc, method=None):
-    """After-insert hook: mark NPD Quality Inspection as promoted."""
-    _mark_promoted("NPD Quality Inspection", "custom_npd_qi_reference", doc, "linked_qi", doc.name)

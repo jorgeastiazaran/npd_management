@@ -38,17 +38,6 @@ frappe.ui.form.on('NPD Quality Inspection', {
 	},
 	
 	refresh: function(frm) {
-        // Promote to Quality Inspection button
-        if (!frm.doc.__islocal && !frm.doc.is_promoted) {
-            frm.add_custom_button(__("Promote to Quality Inspection"), function() {
-                npd_mgmt.open_promote_form(frm, {
-                    target_doctype: "Quality Inspection",
-                    api_method: "npd_management.npd_management.npd_management.doctype.npd_quality_inspection.npd_quality_inspection.get_promotion_data",
-                    confirm_msg: __("This will open a new <b>Quality Inspection</b> form pre-filled from <b>{0}</b>. Review and save to complete.", [frm.doc.name]),
-                });
-            }).addClass("btn-primary");
-        }
-
 		// If creating a new document and we have a reference_name, trigger the fetch
 		if (frm.is_new() && frm.doc.reference_name && frm.doc.reference_type && !frm.doc.item_code) {
 			frm.trigger('reference_name');
