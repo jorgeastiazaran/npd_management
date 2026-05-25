@@ -198,10 +198,12 @@ class NPDBOM(Document):
         else:
             linked_item = npd_bom.item
 
+        from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import NUTRITIONAL_FIELDS
         _BOM_EXCLUDE = {
             "is_promoted", "linked_item", "item_doctype", "default_item_doctype",
             "npdi_reference_quantity_g", "nutrition_facts_section", "nutritional_snapshot_locked",
-        }
+            "npdi_total_yield_kg"
+        }.union(set(NUTRITIONAL_FIELDS))
         data = build_promotion_data(
             npd_bom, "BOM",
             extra_exclude=_BOM_EXCLUDE,
@@ -260,8 +262,11 @@ class NPDBOM(Document):
             if "item_doctype" in item:
                 del item["item_doctype"]
 
+        from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import NUTRITIONAL_FIELDS
         exclude_fields = ["name", "is_promoted", "linked_item", "doctype", "owner",
-                          "creation", "modified", "modified_by", "item_doctype", "default_item_doctype"]
+                          "creation", "modified", "modified_by", "item_doctype", "default_item_doctype",
+                          "npdi_reference_quantity_g", "nutrition_facts_section", "nutritional_snapshot_locked",
+                          "npdi_total_yield_kg"] + list(NUTRITIONAL_FIELDS)
         for field in exclude_fields:
             if field in doc_data:
                 del doc_data[field]
