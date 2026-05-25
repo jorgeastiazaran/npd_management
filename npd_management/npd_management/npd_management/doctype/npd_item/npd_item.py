@@ -1,7 +1,27 @@
 # -*- coding: utf-8 -*-
 import frappe
 from frappe.model.document import Document
-from npd_management.api.npd_utils import push_to_erpnext
+
+# Fields that belong only to NPD Item and must NOT be copied to the standard Item
+_NPD_ONLY_FIELDS = {
+    "name", "is_promoted", "linked_item", "doctype", "owner", "creation",
+    "modified", "modified_by", "modified_by_full_name", "idx", "__islocal",
+    "naming_series", "item_code",
+    # NPD nutritional custom fields (start blank on promotion - user fills them in)
+    "npdi_default_nutritional_profile", "npdi_nutrition_per_100g_kcal",
+    "npdi_section_nutrition", "npdi_include_in_nutrient_calc",
+}
+
+# Child table fields on NPD Item and their corresponding field name on the standard Item
+_CHILD_TABLE_FIELDS = [
+    "barcodes", "uoms", "reorder_levels", "attributes",
+    "item_defaults", "supplier_items", "customer_items", "taxes",
+]
+
+# Row-level keys Frappe adds that must be stripped before passing to a new doc
+_ROW_META_KEYS = {"name", "parent", "parentfield", "parenttype", "owner",
+                  "creation", "modified", "modified_by", "idx", "doctype"}
+
 
 class NPDItem(Document):
     def before_insert(self):
@@ -9,52 +29,86 @@ class NPDItem(Document):
         # We then copy it to item_code.
         if not self.item_code:
             self.item_code = self.name
-        print(f"DEBUG: NPD Item Name: {self.name}, Item Code: {self.item_code}")
 
     @frappe.whitelist()
     def promote_to_production(self):
-        """Promotes the NPD Item to a real Item in ERPNext."""
+        """Promotes the NPD Item to a real Item in ERPNext (legacy backend path)."""
         if self.is_promoted:
             frappe.throw("This item has already been promoted to production.")
-            
-        # Map fields from NPD Item to standard ERPNext Item
-        # Since we mirrored the structure, we can exclude NPD-specific fields
-        doc_data = self.as_dict()
-        exclude_fields = ["name", "is_promoted", "linked_item", "doctype", "owner", "creation", "modified", "modified_by"]
-        for field in exclude_fields:
-            if field in doc_data:
-                del doc_data[field]
-        
-        # Add custom link back to NPD
-        doc_data["custom_npd_reference"] = self.name
-        
-        # Ensure mandatory item_code is present for legacy NPD items created before auto-naming scripts
-        if not doc_data.get("item_code"):
-            doc_data["item_code"] = self.name
-        
+
+        doc_data = self._build_item_data()
         try:
-            response = push_to_erpnext("Item", doc_data)
-            if response and response.get("name"):
-                self.is_promoted = 1
-                self.linked_item = response["name"]
-                if not self.item_code:
-                    self.item_code = self.linked_item
-                self.save()
-                
-                # Copy Nutritional Profiles
-                profiles = frappe.get_all("Nutritional Profile", filters={
-                    "reference_doctype": "NPD Item",
-                    "reference_name": self.name
-                })
-                for profile_info in profiles:
-                    profile_doc = frappe.get_doc("Nutritional Profile", profile_info.name)
-                    new_profile = frappe.copy_doc(profile_doc)
-                    new_profile.reference_doctype = "Item"
-                    new_profile.reference_name = self.linked_item
-                    new_profile.title = f"{profile_doc.title} (Promoted)"
-                    new_profile.insert(ignore_permissions=True)
-                
-                frappe.msgprint(f"Successfully created Item {self.linked_item} in ERPNext.")
+            doc = frappe.get_doc(doc_data)
+            doc.insert(ignore_permissions=True)
+            self._post_promotion(doc.name)
+            frappe.msgprint(f"Successfully created Item {doc.name} in ERPNext.")
+            return doc.name
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "NPD Promotion Error")
             frappe.throw(f"Failed to promote to ERPNext: {str(e)}")
+
+    @frappe.whitelist()
+    @staticmethod
+    def get_promotion_data(npd_item_name):
+        """
+        Returns a clean dict of all NPD Item fields mapped for a new standard Item.
+        Called by the frontend before opening the full Item form, so the user can
+        review and adjust values before the document is saved.
+        """
+        npd = frappe.get_doc("NPD Item", npd_item_name)
+        if npd.is_promoted:
+            frappe.throw("This NPD Item has already been promoted to production.")
+        return npd._build_item_data()
+
+    def _build_item_data(self):
+        """Build a clean Item dict from this NPD Item, ready for frappe.get_doc() or route_options."""
+        raw = self.as_dict()
+
+        # Get the set of fields that actually exist on the standard Item doctype
+        item_meta_fields = {f.fieldname for f in frappe.get_meta("Item").fields}
+
+        item_data = {"doctype": "Item"}
+
+        for key, value in raw.items():
+            if key in _NPD_ONLY_FIELDS:
+                continue
+            if key.startswith("_"):
+                continue
+            # Only include if the target Item doctype actually has this field
+            if key in item_meta_fields:
+                item_data[key] = value
+
+        # Copy child tables, stripping row metadata
+        for table_field in _CHILD_TABLE_FIELDS:
+            rows = raw.get(table_field)
+            if rows:
+                clean_rows = []
+                for row in rows:
+                    clean_row = {k: v for k, v in row.items() if k not in _ROW_META_KEYS}
+                    clean_rows.append(clean_row)
+                item_data[table_field] = clean_rows
+
+        # Mark that this Item was promoted from the NPD record
+        item_data["custom_npd_reference"] = self.name
+
+        return item_data
+
+    def _post_promotion(self, item_name):
+        """Mark the NPD Item as promoted and link it to the created Item."""
+        self.is_promoted = 1
+        self.linked_item = item_name
+        if not self.item_code:
+            self.item_code = item_name
+        self.save(ignore_permissions=True)
+
+        # Copy Nutritional Profiles
+        profiles = frappe.get_all("Nutritional Profile", filters={
+            "reference_doctype": "NPD Item",
+            "reference_name": self.name
+        })
+        for profile_info in profiles:
+            profile_doc = frappe.get_doc("Nutritional Profile", profile_info.name)
+            new_profile = frappe.copy_doc(profile_doc)
+            new_profile.reference_doctype = "Item"
+            new_profile.reference_name = item_name
+            new_profile.insert(ignore_permissions=True)

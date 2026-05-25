@@ -31,7 +31,7 @@ after_install = "npd_management.setup.install.after_install"
 
 doc_events = {
     "Item": {
-        # "after_insert": "npd_management.api.npd_utils.link_promoted_item"
+        "after_insert": "npd_management.api.npd_utils.link_promoted_item"
     },
     "BOM": {
         "validate": "npd_management.bom_nutrition.calculate",

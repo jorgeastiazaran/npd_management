@@ -133,12 +133,33 @@ def push_to_erpnext(doctype, doc_data):
 
 def link_promoted_item(doc, method=None):
     """Document hook triggered after Item insertion to sync promotion status back to NPD Item."""
-    if doc.get("custom_npd_reference"):
-        if frappe.db.exists("NPD Item", doc.custom_npd_reference):
-            npd_item = frappe.get_doc("NPD Item", doc.custom_npd_reference)
-            npd_item.is_promoted = 1
-            npd_item.linked_item = doc.name
-            if not npd_item.item_code:
-                npd_item.item_code = doc.name
-            npd_item.save(ignore_permissions=True)
-            frappe.logger().info(f"Successfully linked promoted Item {doc.name} back to NPD Item {npd_item.name}")
+    if not doc.get("custom_npd_reference"):
+        return
+    if not frappe.db.exists("NPD Item", doc.custom_npd_reference):
+        return
+
+    npd_item = frappe.get_doc("NPD Item", doc.custom_npd_reference)
+
+    # Mark NPD Item as promoted
+    npd_item.is_promoted = 1
+    npd_item.linked_item = doc.name
+    if not npd_item.item_code:
+        npd_item.item_code = doc.name
+    npd_item.save(ignore_permissions=True)
+    frappe.logger().info(f"Successfully linked promoted Item {doc.name} back to NPD Item {npd_item.name}")
+
+    # Copy Nutritional Profiles from NPD Item to the new Item
+    profiles = frappe.get_all("Nutritional Profile", filters={
+        "reference_doctype": "NPD Item",
+        "reference_name": npd_item.name
+    }, fields=["name"])
+    for profile_info in profiles:
+        try:
+            profile_doc = frappe.get_doc("Nutritional Profile", profile_info.name)
+            new_profile = frappe.copy_doc(profile_doc)
+            new_profile.reference_doctype = "Item"
+            new_profile.reference_name = doc.name
+            new_profile.insert(ignore_permissions=True)
+        except Exception:
+            frappe.log_error(frappe.get_traceback(), "NPD Profile Copy Error")
+

@@ -12,33 +12,25 @@ frappe.ui.form.on("NPD Item", {
             
             if (!frm.doc.is_promoted) {
                 frm.add_custom_button(__("Promote to Item"), function() {
-                    let doc_data = JSON.parse(JSON.stringify(frm.doc));
-                    
-                    // Exclude metadata and internal keys
-                    let exclude_fields = ["name", "is_promoted", "linked_item", "doctype", "owner", "creation", "modified", "modified_by"];
-                    exclude_fields.forEach(f => delete doc_data[f]);
-                    
-                    // Clear item_code and naming_series to let standard Item settings dictate generation
-                    delete doc_data.item_code;
-                    delete doc_data.naming_series;
-                    
-                    // Clean up child table auto-generated keys
-                    ["barcodes", "uoms", "reorder_levels"].forEach(table_field => {
-                        if (doc_data[table_field]) {
-                            doc_data[table_field].forEach(row => {
-                                delete row.name;
-                                delete row.parent;
-                                delete row.parentfield;
-                                delete row.parenttype;
+                    frappe.confirm(
+                        __("This will create a new ERPNext Item from NPD Item <b>{0}</b> and open its full form for review before saving. Continue?", [frm.doc.name]),
+                        function() {
+                            frappe.show_progress(__("Preparing Item..."), 30, 100);
+                            frappe.call({
+                                method: "npd_management.npd_management.npd_management.doctype.npd_item.npd_item.get_promotion_data",
+                                args: { npd_item_name: frm.doc.name },
+                                callback: function(r) {
+                                    frappe.hide_progress();
+                                    if (r.exc) return;
+                                    let item_data = r.message;
+                                    // Store the mapped data in route_options so the Item form
+                                    // picks it up when it opens
+                                    frappe.route_options = item_data;
+                                    frappe.set_route("Form", "Item", "new-item-1");
+                                }
                             });
                         }
-                    });
-                    
-                    // Establish auto-linking string
-                    doc_data.custom_npd_reference = frm.doc.name;
-                    
-                    // Interactively open standard Item form pre-filled
-                    frappe.new_doc("Item", doc_data);
+                    );
                 }).addClass("btn-primary");
             }
 
