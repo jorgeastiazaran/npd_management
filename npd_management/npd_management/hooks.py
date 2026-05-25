@@ -36,11 +36,28 @@ doc_events = {
     "BOM": {
         "validate": "npd_management.bom_nutrition.calculate",
         "on_submit": "npd_management.bom_nutrition.on_submit",
+        "after_insert": "npd_management.api.npd_utils.link_promoted_bom",
+    },
+    "Supplier": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_supplier",
+    },
+    "Supplier Quotation": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_supplier_quotation",
+    },
+    "Quotation": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_quotation",
+    },
+    "Request for Quotation": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_rfq",
+    },
+    "Quality Inspection": {
+        "after_insert": "npd_management.api.npd_utils.link_promoted_qi",
     },
 }
 
 app_include_js = [
     "/assets/npd_management/js/bom_nutrition.js",
+    "/assets/npd_management/js/npd_promotion.js",
 ]
 
 override_doctype_dashboards = {

@@ -163,3 +163,67 @@ def link_promoted_item(doc, method=None):
         except Exception:
             frappe.log_error(frappe.get_traceback(), "NPD Profile Copy Error")
 
+
+def _mark_promoted(npd_doctype, ref_field, doc, linked_field, production_doc_name):
+    """Generic helper to mark an NPD document as promoted after a production doc is inserted."""
+    ref_value = doc.get(ref_field)
+    if not ref_value:
+        return
+    if not frappe.db.exists(npd_doctype, ref_value):
+        return
+    npd_doc = frappe.get_doc(npd_doctype, ref_value)
+    npd_doc.is_promoted = 1
+    npd_doc.set(linked_field, production_doc_name)
+    npd_doc.save(ignore_permissions=True)
+    frappe.logger().info(f"Linked {npd_doctype} {ref_value} → {production_doc_name}")
+
+
+def link_promoted_bom(doc, method=None):
+    """After-insert hook: mark NPD BOM as promoted when a BOM with custom_npd_bom_reference is saved."""
+    _mark_promoted("NPD BOM", "custom_npd_bom_reference", doc, "linked_item", doc.name)
+
+
+def link_promoted_supplier(doc, method=None):
+    """After-insert hook: mark NPD Supplier as promoted and cascade eligible Supplier Quotations."""
+    ref_value = doc.get("custom_npd_supplier_reference")
+    if not ref_value or not frappe.db.exists("NPD Supplier", ref_value):
+        return
+    npd_supplier = frappe.get_doc("NPD Supplier", ref_value)
+    npd_supplier.is_promoted = 1
+    npd_supplier.linked_supplier = doc.name
+    npd_supplier.save(ignore_permissions=True)
+    frappe.logger().info(f"Linked NPD Supplier {ref_value} → {doc.name}")
+
+    # Cascade: auto-promote any fully-ready NPD Supplier Quotations
+    try:
+        npd_supplier._promote_eligible_quotations(doc.name)
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "NPD Supplier cascade SQ promotion error")
+
+
+def link_promoted_supplier_quotation(doc, method=None):
+    """After-insert hook: mark NPD Supplier Quotation as promoted."""
+    _mark_promoted("NPD Supplier Quotation", "custom_npd_sq_reference", doc, "linked_sq", doc.name)
+
+
+def link_promoted_quotation(doc, method=None):
+    """After-insert hook: mark NPD Quotation as promoted when a Quotation with custom_npd_quotation_reference is saved."""
+    ref_value = doc.get("custom_npd_quotation_reference")
+    if not ref_value or not frappe.db.exists("NPD Quotation", ref_value):
+        return
+    npd_qtn = frappe.get_doc("NPD Quotation", ref_value)
+    npd_qtn.is_promoted = 1
+    npd_qtn.promoted_quotation = doc.name
+    npd_qtn.status = "Promoted"
+    npd_qtn.save(ignore_permissions=True)
+    frappe.logger().info(f"Linked NPD Quotation {ref_value} → {doc.name}")
+
+
+def link_promoted_rfq(doc, method=None):
+    """After-insert hook: mark NPD RFQ as promoted."""
+    _mark_promoted("NPD RFQ", "custom_npd_rfq_reference", doc, "linked_rfq", doc.name)
+
+
+def link_promoted_qi(doc, method=None):
+    """After-insert hook: mark NPD Quality Inspection as promoted."""
+    _mark_promoted("NPD Quality Inspection", "custom_npd_qi_reference", doc, "linked_qi", doc.name)

@@ -150,7 +150,18 @@ def get_custom_fields():
                 "read_only": 1
             }
         ],
-        "BOM": bom_nutrition,
+        "BOM": bom_nutrition + [
+            {
+                "fieldname": "custom_npd_bom_reference",
+                "label": "NPD BOM Reference",
+                "fieldtype": "Link",
+                "options": "NPD BOM",
+                "insert_after": "description",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD BOM this record was promoted from.",
+            }
+        ],
         "BOM Item": [
             {
                 "fieldname": "include_in_nutrient_calc",
@@ -159,6 +170,66 @@ def get_custom_fields():
                 "insert_after": "qty",
                 "default": "1",
                 "in_list_view": 1,
+            }
+        ],
+        "Supplier": [
+            {
+                "fieldname": "custom_npd_supplier_reference",
+                "label": "NPD Supplier Reference",
+                "fieldtype": "Link",
+                "options": "NPD Supplier",
+                "insert_after": "supplier_name",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD Supplier this record was promoted from.",
+            }
+        ],
+        "Supplier Quotation": [
+            {
+                "fieldname": "custom_npd_sq_reference",
+                "label": "NPD Supplier Quotation Reference",
+                "fieldtype": "Link",
+                "options": "NPD Supplier Quotation",
+                "insert_after": "supplier",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD Supplier Quotation this record was promoted from.",
+            }
+        ],
+        "Quotation": [
+            {
+                "fieldname": "custom_npd_quotation_reference",
+                "label": "NPD Quotation Reference",
+                "fieldtype": "Link",
+                "options": "NPD Quotation",
+                "insert_after": "party_name",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD Quotation this record was promoted from.",
+            }
+        ],
+        "Request for Quotation": [
+            {
+                "fieldname": "custom_npd_rfq_reference",
+                "label": "NPD RFQ Reference",
+                "fieldtype": "Link",
+                "options": "NPD RFQ",
+                "insert_after": "company",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD RFQ this record was promoted from.",
+            }
+        ],
+        "Quality Inspection": [
+            {
+                "fieldname": "custom_npd_qi_reference",
+                "label": "NPD Quality Inspection Reference",
+                "fieldtype": "Link",
+                "options": "NPD Quality Inspection",
+                "insert_after": "status",
+                "no_copy": 1,
+                "read_only": 1,
+                "description": "Reference to the NPD Quality Inspection this record was promoted from.",
             }
         ],
     }

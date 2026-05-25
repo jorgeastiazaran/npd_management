@@ -3,6 +3,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
 from npd_management.api.npd_utils import push_to_erpnext
+from npd_management.api.npd_promotion import build_promotion_data, strip_row_meta
 from npd_management.utils.nutritional_rollup import (
     apply_rollup_to_doc,
     collect_profile_names_from_items,
@@ -170,6 +171,70 @@ class NPDBOM(Document):
             lock_profile(profile_name)
 
         frappe.db.set_value("NPD BOM", self.name, "nutritional_snapshot_locked", 1)
+
+    @frappe.whitelist()
+    @staticmethod
+    def get_promotion_data(npd_item_name):
+        """
+        Returns a clean dict mapped to the standard BOM doctype, suitable for
+        frappe.route_options to pre-fill the full BOM form.
+
+        Validates that:
+        - The parent item is a promoted NPD Item (has a linked_item).
+        - All component NPD Items are promoted.
+        Then remaps item codes and strips NPD-specific fields.
+        """
+        npd_bom = frappe.get_doc("NPD BOM", npd_item_name)
+        if npd_bom.is_promoted:
+            frappe.throw(f"NPD BOM <b>{npd_item_name}</b> has already been promoted.")
+
+        # Resolve the BOM header item
+        if npd_bom.item_doctype == "NPD Item":
+            linked_item = frappe.db.get_value("NPD Item", npd_bom.item, "linked_item")
+            if not linked_item:
+                frappe.throw(
+                    f"Parent item <b>{npd_bom.item}</b> must be promoted to an ERPNext Item before its BOM can be promoted."
+                )
+        else:
+            linked_item = npd_bom.item
+
+        _BOM_EXCLUDE = {
+            "is_promoted", "linked_item", "item_doctype", "default_item_doctype",
+            "npdi_reference_quantity_g", "nutrition_facts_section", "nutritional_snapshot_locked",
+        }
+        data = build_promotion_data(
+            npd_bom, "BOM",
+            extra_exclude=_BOM_EXCLUDE,
+            child_table_fields=["operations", "scrap_items"],
+        )
+
+        # Override the item with the real ERPNext item code
+        data["item"] = linked_item
+        # Mark back-reference for after_insert hook
+        data["custom_npd_bom_reference"] = npd_bom.name
+
+        # Remap BOM items child table (items field handled separately for remapping)
+        clean_items = []
+        for item in npd_bom.get("items", []):
+            item_d = item.as_dict()
+            item_code = item_d.get("item_code")
+            item_type = item_d.get("item_doctype")
+            if item_type == "NPD Item":
+                linked = frappe.db.get_value("NPD Item", item_code, "linked_item")
+                if not linked:
+                    frappe.throw(
+                        f"Component <b>{item_code}</b> is an NPD Item and must be promoted first."
+                    )
+                item_code = linked
+            row = {k: v for k, v in item_d.items() if k not in {
+                "name", "parent", "parentfield", "parenttype", "owner",
+                "creation", "modified", "modified_by", "idx", "doctype", "item_doctype",
+            }}
+            row["item_code"] = item_code
+            clean_items.append(row)
+        data["items"] = clean_items
+
+        return data
 
     @frappe.whitelist()
     def promote_to_production(self):

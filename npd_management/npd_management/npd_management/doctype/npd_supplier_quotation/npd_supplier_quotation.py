@@ -35,6 +35,65 @@ class NPDSupplierQuotation(Document):
         return True
 
     @frappe.whitelist()
+
+    @frappe.whitelist()
+    @staticmethod
+    def get_promotion_data(npd_item_name):
+        """Returns a clean dict mapped to Supplier Quotation for full-form promotion."""
+        from npd_management.api.npd_promotion import strip_row_meta
+        npd = frappe.get_doc("NPD Supplier Quotation", npd_item_name)
+        if npd.is_promoted:
+            frappe.throw(f"NPD Supplier Quotation <b>{npd_item_name}</b> has already been promoted.")
+        if npd.docstatus != 1:
+            frappe.throw("Please submit the NPD Supplier Quotation before promoting.")
+
+        # Resolve supplier
+        if npd.supplier_type == "NPD Supplier":
+            linked_supplier = frappe.db.get_value("NPD Supplier", npd.supplier, "linked_supplier")
+            if not linked_supplier:
+                frappe.throw(f"NPD Supplier <b>{npd.supplier}</b> must be promoted first.")
+        else:
+            linked_supplier = npd.supplier
+
+        # Remap items
+        items = []
+        for item in npd.items:
+            item_code = item.item_code
+            if item.item_type == "NPD Item":
+                item_code = frappe.db.get_value("NPD Item", item.item_code, "linked_item")
+                if not item_code:
+                    frappe.throw(f"NPD Item <b>{item.item_code}</b> must be promoted first.")
+            items.append({
+                "item_code": item_code,
+                "item_name": item.item_name,
+                "description": item.description or item.item_name,
+                "qty": item.qty,
+                "uom": item.uom,
+                "stock_uom": item.stock_uom or item.uom,
+                "conversion_factor": item.conversion_factor or 1,
+                "rate": item.rate,
+                "amount": item.amount,
+                "base_rate": item.base_rate or item.rate,
+                "base_amount": item.base_amount or item.amount,
+                "warehouse": item.warehouse,
+                "project": item.project,
+                "lead_time_days": item.lead_time_days or 0,
+            })
+
+        return {
+            "doctype": "Supplier Quotation",
+            "supplier": linked_supplier,
+            "company": npd.company,
+            "transaction_date": str(npd.transaction_date) if npd.transaction_date else None,
+            "valid_till": str(npd.valid_till) if npd.valid_till else None,
+            "quotation_number": npd.quotation_number,
+            "currency": npd.currency,
+            "conversion_rate": npd.conversion_rate or 1,
+            "buying_price_list": npd.buying_price_list,
+            "items": items,
+            "custom_npd_sq_reference": npd.name,
+        }
+
     def promote_to_production(self):
         """Promotes this NPD Supplier Quotation to a standard Supplier Quotation.
         - If supplier_type == 'NPD Supplier': supplier must be promoted first.

@@ -6,24 +6,11 @@ frappe.ui.form.on('NPD Quotation', {
         // Gated pipeline button: visible only in Approved state when unpromoted
         if (frm.doc.status === 'Approved' && !frm.doc.is_promoted) {
             frm.add_custom_button(__('Promote to Sales Quotation'), function() {
-                frappe.confirm(
-                    __('Are you sure you want to map this agreement into a live ERPNext Sales Quotation?<br><br><b>Interlock Rule:</b> Every experimental candidate formulation item must already be established in active production inventory.'),
-                    function() {
-                        frappe.call({
-                            method: 'promote_to_standard_quotation',
-                            doc: frm.doc,
-                            freeze: true,
-                            freeze_message: __('Mapping agreement metrics to live Sales Quotation...'),
-                            callback: function(r) {
-                                if (!r.exc && r.message) {
-                                    frm.reload_doc();
-                                    // Instantly redirect desktop view to newly created live document
-                                    frappe.set_route('Form', 'Quotation', r.message);
-                                }
-                            }
-                        });
-                    }
-                );
+                npd_mgmt.open_promote_form(frm, {
+                    target_doctype: "Quotation",
+                    api_method: "npd_management.npd_management.npd_management.doctype.npd_quotation.npd_quotation.get_promotion_data",
+                    confirm_msg: __("This will open a new <b>Sales Quotation</b> form pre-filled with data from <b>{0}</b>. All NPD Items must already be promoted. Review and save to complete.", [frm.doc.name]),
+                });
             }).addClass('btn-primary');
         }
     },

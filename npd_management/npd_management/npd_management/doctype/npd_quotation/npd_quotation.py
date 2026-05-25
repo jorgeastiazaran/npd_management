@@ -29,6 +29,47 @@ class NPDQuotation(Document):
         else:
             self.overall_gross_margin = 0.0
 
+
+    @frappe.whitelist()
+    @staticmethod
+    def get_promotion_data(npd_item_name):
+        """Returns a clean dict mapped to the standard Quotation doctype for full-form promotion."""
+        npd = frappe.get_doc("NPD Quotation", npd_item_name)
+        if npd.is_promoted:
+            frappe.throw(f"NPD Quotation <b>{npd_item_name}</b> has already been promoted.")
+        if npd.status != "Approved":
+            frappe.throw("Quotation status must be 'Approved' before promoting.")
+        if not npd.get("items"):
+            frappe.throw("Cannot promote an empty quotation.")
+
+        items = []
+        for row in npd.get("items"):
+            npd_item_doc = frappe.get_doc("NPD Item", row.npd_item)
+            if not npd_item_doc.linked_item:
+                frappe.throw(
+                    f"Row #{row.idx}: NPD Item <b>{row.npd_item}</b> must be promoted to an Item first."
+                )
+            items.append({
+                "item_code": npd_item_doc.linked_item,
+                "qty": row.qty,
+                "rate": row.rate,
+                "uom": row.uom or npd_item_doc.stock_uom,
+                "description": row.description,
+            })
+
+        return {
+            "doctype": "Quotation",
+            "quotation_to": npd.quotation_to,
+            "party_name": npd.party_name,
+            "transaction_date": str(npd.transaction_date) if npd.transaction_date else None,
+            "valid_till": str(npd.valid_till) if npd.valid_till else None,
+            "currency": npd.currency,
+            "company": npd.company,
+            "order_type": "Sales",
+            "items": items,
+            "custom_npd_quotation_reference": npd.name,
+        }
+
     @frappe.whitelist()
     def promote_to_standard_quotation(self):
         """Atomically promotes the experimental NPD Quotation into a standard Sales Quotation."""
