@@ -21,7 +21,7 @@ def run_tests():
         }).insert(ignore_permissions=True)
 
     # 1. Clean up any previous test docs to keep it clean
-    frappe.db.sql("DELETE FROM `tabNPD Nutritional Profile` WHERE name LIKE 'TEST-NP-%'")
+    frappe.db.sql("DELETE FROM `tabNutritional Profile` WHERE name LIKE 'TEST-NP-%'")
     frappe.db.sql("DELETE FROM `tabNPD BOM Item` WHERE parent LIKE 'TEST-BOM-%'")
     frappe.db.sql("DELETE FROM `tabNPD BOM` WHERE name LIKE 'TEST-BOM-%'")
     frappe.db.sql("DELETE FROM `tabBOM Item` WHERE parent LIKE 'TEST-EBOM-%'")
@@ -36,22 +36,28 @@ def run_tests():
     if not frappe.db.exists("NPD Item", npd_item_1):
         frappe.get_doc({
             "doctype": "NPD Item",
+            "name": npd_item_1,
             "item_code": npd_item_1,
             "item_name": "Test NPD Item 1",
             "item_group": "All Item Groups",
             "stock_uom": "g",
-            "valuation_rate": 1.5
-        }).insert()
+            "valuation_rate": 1.5,
+            "naming_series": "NPD-MP-",
+            "npdi_include_in_nutrient_calc": 1
+        }).db_insert()
         
     if not frappe.db.exists("NPD Item", npd_item_2):
         frappe.get_doc({
             "doctype": "NPD Item",
+            "name": npd_item_2,
             "item_code": npd_item_2,
             "item_name": "Test NPD Item 2",
             "item_group": "All Item Groups",
             "stock_uom": "g",
-            "valuation_rate": 2.0
-        }).insert()
+            "valuation_rate": 2.0,
+            "naming_series": "NPD-MP-",
+            "npdi_include_in_nutrient_calc": 1
+        }).db_insert()
 
     if not frappe.db.exists("Item", erp_item_1):
         frappe.get_doc({
@@ -76,9 +82,10 @@ def run_tests():
     print("Step 1: Create Nutritional Profiles and verify default logic")
     # Create Profile A for npd_item_1
     p_a = frappe.get_doc({
-        "doctype": "NPD Nutritional Profile",
+        "doctype": "Nutritional Profile",
         "title": "TEST-NP-A",
-        "npd_item": npd_item_1,
+        "reference_doctype": "NPD Item",
+        "reference_name": npd_item_1,
         "is_default": 1,
         "reference_quantity_g": 100,
         "contenido_energetico_kcal": 200.0,
@@ -89,9 +96,10 @@ def run_tests():
     
     # Create Profile B for npd_item_1, also set to default
     p_b = frappe.get_doc({
-        "doctype": "NPD Nutritional Profile",
+        "doctype": "Nutritional Profile",
         "title": "TEST-NP-B",
-        "npd_item": npd_item_1,
+        "reference_doctype": "NPD Item",
+        "reference_name": npd_item_1,
         "is_default": 1,
         "reference_quantity_g": 100,
         "contenido_energetico_kcal": 350.0,
@@ -114,9 +122,10 @@ def run_tests():
 
     # Create active profile for npd_item_2
     p_c = frappe.get_doc({
-        "doctype": "NPD Nutritional Profile",
+        "doctype": "Nutritional Profile",
         "title": "TEST-NP-C",
-        "npd_item": npd_item_2,
+        "reference_doctype": "NPD Item",
+        "reference_name": npd_item_2,
         "is_default": 1,
         "reference_quantity_g": 100,
         "contenido_energetico_kcal": 100.0,
@@ -196,9 +205,10 @@ def run_tests():
     # 4. Standard ERPNext BOM test
     print("Step 4: Create active nutritional profiles for standard ERPNext Items")
     p_erp_1 = frappe.get_doc({
-        "doctype": "NPD Nutritional Profile",
+        "doctype": "Nutritional Profile",
         "title": "TEST-NP-ERP-1",
-        "item_code": erp_item_1,
+        "reference_doctype": "Item",
+        "reference_name": erp_item_1,
         "is_default": 1,
         "reference_quantity_g": 100,
         "contenido_energetico_kcal": 150.0,
@@ -206,9 +216,10 @@ def run_tests():
     }).insert()
     
     p_erp_2 = frappe.get_doc({
-        "doctype": "NPD Nutritional Profile",
+        "doctype": "Nutritional Profile",
         "title": "TEST-NP-ERP-2",
-        "item_code": erp_item_2,
+        "reference_doctype": "Item",
+        "reference_name": erp_item_2,
         "is_default": 1,
         "reference_quantity_g": 100,
         "contenido_energetico_kcal": 250.0,

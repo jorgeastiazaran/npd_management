@@ -38,11 +38,17 @@ def get_kg_conversion_factor(item_code, item_doctype):
         doc = frappe.get_doc(item_doctype, item_code)
     except frappe.DoesNotExistError:
         return 0.0
-    if (doc.get("stock_uom") or "").lower() == "kg":
+    stock_uom = doc.get("stock_uom") or ""
+    if stock_uom.lower() == "kg":
         return 1.0
     for u in doc.get("uoms", []):
         if (u.uom or "").lower() == "kg":
             return 1.0 / flt(u.conversion_factor) if flt(u.conversion_factor) else 0.0
+            
+    # Fallback to static UOM translation if no database conversion is configured
+    static_factor = get_static_kg_factor(stock_uom)
+    if static_factor is not None:
+        return static_factor
     return 0.0
 
 

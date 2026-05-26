@@ -1,8 +1,15 @@
 import frappe
 
 def run():
-    frappe.init(site="test.localhost", sites_path="sites")
-    frappe.connect()
+    # Only initialize if not already initialized (e.g. if run outside bench execute)
+    if not getattr(frappe.local, "site", None):
+        import os
+        site = "localhost"
+        if os.path.exists("sites/currentsite.txt"):
+            with open("sites/currentsite.txt", "r") as f:
+                site = f.read().strip()
+        frappe.init(site=site, sites_path="sites")
+        frappe.connect()
     if frappe.db.exists("DocType", "NPD Trial Note"):
         print("DocType already exists")
         return

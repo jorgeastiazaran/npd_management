@@ -7,6 +7,8 @@ from frappe.utils import flt
 
 class NutritionalProfile(Document):
 	def validate(self):
+		if self.is_locked:
+			frappe.throw("This Nutritional Profile is locked because it is referenced by a submitted BOM.")
 		self.set_item_name()
 		self.calculate_energy()
 		
@@ -25,7 +27,7 @@ class NutritionalProfile(Document):
 			except Exception:
 				pass
 
-	def on_submit(self):
+	def on_update(self):
 		self.sync_with_parent()
 
 	def sync_with_parent(self):
