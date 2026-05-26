@@ -17,14 +17,12 @@ app_license = "MIT"
 # Naming Series, and any other config travels with the app to production.
 fixtures = [
     {
-        "dt": "Property Setter",
+        "doctype": "Property Setter",
         "filters": [["doc_type", "like", "NPD%"]]
     },
 ]
 
 # ─── Hooks ───────────────────────────────────────────────────────────────────
-# after_migrate: runs after every `bench migrate`
-after_migrate = "npd_management.setup.install.after_install"
 
 # after_install: runs once when the app is first installed on a new site
 after_install = "npd_management.setup.install.after_install"

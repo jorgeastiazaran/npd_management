@@ -52,8 +52,16 @@ def check_kg_conversions(items_json):
     """Scan BOM items JSON for missing Kg conversions."""
     import json
     items = json.loads(items_json)
+    
+    # Validate doctype and read permissions
+    for row in items:
+        doctype = row.get("item_doctype", "Item")
+        if doctype not in ["Item", "NPD Item"]:
+            frappe.throw("Invalid DocType specified for Kg conversions.")
+        doc = frappe.get_doc(doctype, row.get("item_code"))
+        frappe.has_permission(doctype, "read", doc=doc, throw=True)
+        
     from npd_management.utils.nutritional_rollup import check_missing_kg_conversions
-    # We pass the items dict directly, but we need item_doctype and item_code
     return check_missing_kg_conversions(items, item_doctype_key="item_doctype", default_item_doctype="Item")
 
 
@@ -64,13 +72,35 @@ def save_kg_conversions(conversions):
     conversions_list = json.loads(conversions)
     
     for row in conversions_list:
-        doc = frappe.get_doc(row.get("item_doctype", "Item"), row.get("item_code"))
-        # Add UOM Conversion
-        doc.append("uoms", {
-            "uom": "Kg",
-            "conversion_factor": flt(row.get("conversion_factor"))
-        })
-        doc.flags.ignore_permissions = True
+        doctype = row.get("item_doctype", "Item")
+        item_code = row.get("item_code")
+        factor = flt(row.get("conversion_factor"))
+        
+        if doctype not in ["Item", "NPD Item"]:
+            frappe.throw("Invalid DocType specified for Kg conversions.")
+            
+        if factor <= 0:
+            frappe.throw("Conversion factor must be greater than zero.")
+            
+        # Verify user has write permissions on the document
+        doc = frappe.get_doc(doctype, item_code)
+        frappe.has_permission(doctype, "write", doc=doc, throw=True)
+        
+        # Check if a UOM entry for "Kg" already exists to avoid duplicates (upsert pattern)
+        existing_uom = None
+        for u in doc.get("uoms", []):
+            if (u.uom or "").lower() == "kg":
+                existing_uom = u
+                break
+                
+        if existing_uom:
+            existing_uom.conversion_factor = factor
+        else:
+            doc.append("uoms", {
+                "uom": "Kg",
+                "conversion_factor": factor
+            })
+            
         doc.flags.ignore_validate = True
         doc.flags.ignore_mandatory = True
         doc.save()
@@ -81,7 +111,10 @@ def save_kg_conversions(conversions):
 @frappe.whitelist()
 def recalculate_bom_nutrition(bom_name):
     """Manual recalculation from BOM form (client script)."""
+    # Verify write permissions on the BOM document
     doc = frappe.get_doc("BOM", bom_name)
+    frappe.has_permission("BOM", "write", doc=doc, throw=True)
+    
     if _is_locked(doc):
         frappe.throw("Nutritional values are locked because this BOM was submitted.")
     calculate_nutrition(doc)

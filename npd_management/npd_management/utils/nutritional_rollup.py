@@ -25,13 +25,20 @@ def get_static_kg_factor(uom):
 def get_kg_conversion_factor(item_code, item_doctype):
     """
     Return the multiplier to convert stock_qty to Kg.
-    Uses the explicit UOM conversion table where 1 Kg = X stock_uom.
+    
+    ERPNext stores the conversion factor in the uoms child table as:
+    1 unit of UOM (e.g. Kg) = conversion_factor * (1 unit of stock_uom, e.g. Gram).
+    So for Stock UOM Gram and conversion UOM Kg, conversion_factor = 1000.0.
+    
+    To convert stock_qty (in stock_uom) to Kg weight, we divide:
+    weight_kg = stock_qty / conversion_factor.
+    This corresponds to multiplying stock_qty by (1.0 / conversion_factor).
     """
     try:
         doc = frappe.get_doc(item_doctype, item_code)
     except frappe.DoesNotExistError:
         return 0.0
-    if (doc.stock_uom or "").lower() == "kg":
+    if (doc.get("stock_uom") or "").lower() == "kg":
         return 1.0
     for u in doc.get("uoms", []):
         if (u.uom or "").lower() == "kg":
@@ -74,15 +81,17 @@ def check_missing_kg_conversions(items, item_doctype_key="item_doctype", default
 
         if not has_kg:
             suggested = ""
-            static_factor = get_static_kg_factor(doc.stock_uom)
+            static_factor = get_static_kg_factor(doc.get("stock_uom"))
             if static_factor:
                 # 1 stock_uom = static_factor Kg -> 1 Kg = (1/static_factor) stock_uom
                 suggested = 1.0 / static_factor
             else:
-                if doc.get("weight_per_unit") and doc.get("weight_uom"):
-                    w_factor = get_static_kg_factor(doc.weight_uom)
+                weight_per_unit = doc.get("weight_per_unit")
+                weight_uom = doc.get("weight_uom")
+                if weight_per_unit and weight_uom:
+                    w_factor = get_static_kg_factor(weight_uom)
                     if w_factor:
-                        suggested = 1.0 / (flt(doc.weight_per_unit) * w_factor)
+                        suggested = 1.0 / (flt(weight_per_unit) * w_factor)
 
             missing.append({
                 "item_code": item_code,

@@ -1,5 +1,25 @@
 frappe.ui.form.on("BOM", {
     onload: function(frm) {
+        frm.set_query("item", function() {
+            return {
+                query: "erpnext.manufacturing.doctype.bom.bom.item_query",
+                filters: {
+                    "is_stock_item": 1,
+                    "name": ["not like", "NPD-%"]
+                }
+            };
+        });
+        frm.set_query("item_code", "items", function() {
+            return {
+                query: "erpnext.manufacturing.doctype.bom.bom.item_query",
+                filters: {
+                    "include_item_in_manufacturing": 1,
+                    "is_fixed_asset": 0,
+                    "name": ["not like", "NPD-%"]
+                }
+            };
+        });
+
         if (frm.doc.__islocal && frm.doc.items && frm.doc.items.length > 0) {
             setTimeout(() => frm.trigger("calculate_nutritional_info"), 500);
         }
@@ -31,7 +51,6 @@ frappe.ui.form.on("BOM", {
             return;
         }
 
-        
         let safe_items = (frm.doc.items || []).map(row => {
             return {
                 item_code: row.item_code,
@@ -115,9 +134,11 @@ frappe.ui.form.on("BOM", {
                     let totals = r.message.totals;
                     for (let key in totals) {
                         if (key === "total_yield_kg" && frm.fields_dict.npdi_total_yield_kg) {
-                            frm.set_value("npdi_total_yield_kg", totals[key]);
+                            frm.doc.npdi_total_yield_kg = totals[key];
+                            frm.refresh_field("npdi_total_yield_kg");
                         } else if (frm.fields_dict[key]) {
-                            frm.set_value(key, totals[key]);
+                            frm.doc[key] = totals[key];
+                            frm.refresh_field(key);
                         }
                     }
                     if (r.message.warnings && r.message.warnings.length > 0) {
@@ -135,15 +156,23 @@ frappe.ui.form.on("BOM", {
 
 frappe.ui.form.on("BOM Item", {
     qty: function(frm) {
-        frm.trigger("calculate_nutritional_info");
+        setTimeout(() => {
+            frm.trigger("calculate_nutritional_info");
+        }, 200);
     },
     uom: function(frm) {
-        frm.trigger("calculate_nutritional_info");
+        setTimeout(() => {
+            frm.trigger("calculate_nutritional_info");
+        }, 200);
     },
     item_code: function(frm) {
-        frm.trigger("calculate_nutritional_info");
+        setTimeout(() => {
+            frm.trigger("calculate_nutritional_info");
+        }, 200);
     },
     include_in_nutrient_calc: function(frm) {
-        frm.trigger("calculate_nutritional_info");
+        setTimeout(() => {
+            frm.trigger("calculate_nutritional_info");
+        }, 200);
     }
 });

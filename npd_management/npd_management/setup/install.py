@@ -62,11 +62,12 @@ def ensure_kg_uom():
 def after_install():
     """Hook executed after app installation to inject custom fields into standard DocTypes."""
     ensure_kg_uom()
-    create_custom_fields(get_custom_fields(), ignore_validate=True)
+    custom_fields = get_custom_fields()
+    create_custom_fields(custom_fields, ignore_validate=True)
 
 
 def get_custom_fields():
-    bom_nutrition = _bom_nutrition_fields("description")
+    bom_nutrition = _bom_nutrition_fields("custom_npd_bom_reference")
 
     return {
         "Item": [
@@ -150,7 +151,7 @@ def get_custom_fields():
                 "read_only": 1
             }
         ],
-        "BOM": bom_nutrition + [
+        "BOM": [
             {
                 "fieldname": "custom_npd_bom_reference",
                 "label": "NPD BOM Reference",
@@ -161,7 +162,7 @@ def get_custom_fields():
                 "read_only": 1,
                 "description": "Reference to the NPD BOM this record was promoted from.",
             }
-        ],
+        ] + bom_nutrition,
         "BOM Item": [
             {
                 "fieldname": "include_in_nutrient_calc",
