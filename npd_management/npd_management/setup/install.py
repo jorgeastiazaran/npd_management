@@ -60,10 +60,108 @@ def ensure_kg_uom():
 
 
 def after_install():
-    """Hook executed after app installation to inject custom fields into standard DocTypes."""
+    """
+    Hook executed after app installation to inject custom fields into standard DocTypes.
+    Idempotent: safe to call multiple times without raising DuplicateEntryError.
+    """
     ensure_kg_uom()
-    custom_fields = get_custom_fields()
-    create_custom_fields(custom_fields, ignore_validate=True)
+    _create_custom_fields_idempotent(get_custom_fields())
+
+
+def _create_custom_fields_idempotent(custom_fields_map):
+    """
+    Calls create_custom_fields() only for fields that do not yet exist.
+    Makes the installer safe to run on both fresh and partially-migrated sites.
+    """
+    filtered = {}
+    for dt, fields in custom_fields_map.items():
+        missing = [
+            f for f in fields
+            if not frappe.db.exists("Custom Field", {"dt": dt, "fieldname": f["fieldname"]})
+        ]
+        if missing:
+            filtered[dt] = missing
+
+    if filtered:
+        create_custom_fields(filtered, ignore_validate=True)
+
+
+# ─── List of ALL custom fields this app injects into standard DocTypes ───────
+# Keep this list in sync with get_custom_fields() above.
+# Format: (DocType, fieldname)
+_NPD_MANAGEMENT_CUSTOM_FIELDS = [
+    # Item
+    ("Item", "custom_npd_reference"),
+    ("Item", "npdi_section_nutrition"),
+    ("Item", "npdi_default_nutritional_profile"),
+    ("Item", "npdi_include_in_nutrient_calc"),
+    ("Item", "npdi_nutrition_per_100g_kcal"),
+    # BOM
+    ("BOM", "custom_npd_bom_reference"),
+    ("BOM", "nutrition_facts_section"),
+    ("BOM", "nutritional_snapshot_locked"),
+    ("BOM", "contenido_energetico_kcal"),
+    ("BOM", "contenido_energetico_kj"),
+    ("BOM", "proteinas_g"),
+    ("BOM", "grasas_g"),
+    ("BOM", "grasas_saturadas_g"),
+    ("BOM", "grasas_trans_g"),
+    ("BOM", "colesterol_mg"),
+    ("BOM", "carbohidratos_g"),
+    ("BOM", "azucares_g"),
+    ("BOM", "azucares_anadidos_g"),
+    ("BOM", "fibra_dietetica_g"),
+    ("BOM", "sodio_mg"),
+    ("BOM", "potasio_mg"),
+    ("BOM", "calcio_mg"),
+    ("BOM", "hierro_mg"),
+    ("BOM", "vit_d_ug"),
+    # BOM Item
+    ("BOM Item", "include_in_nutrient_calc"),
+    # Supplier
+    ("Supplier", "custom_npd_supplier_reference"),
+    # Supplier Quotation
+    ("Supplier Quotation", "custom_npd_sq_reference"),
+    # Quotation
+    ("Quotation", "custom_npd_quotation_reference"),
+    # Quality Inspection Template
+    ("Quality Inspection Template", "custom_npd_qi_template_reference"),
+]
+
+# Any physical tables that may be left as orphans (edge-case legacy renames)
+_NPD_MANAGEMENT_ORPHAN_TABLES = [
+    "tabNPD Nutritional Profile",   # legacy rename artefact
+]
+
+
+def before_uninstall():
+    """
+    Hook executed before the app is removed from a site.
+    Deletes all Custom Fields injected by npd_management so that standard
+    DocTypes (BOM, Item, Supplier …) are left completely clean.
+    """
+    frappe.logger().info("npd_management: running before_uninstall cleanup…")
+
+    # 1. Delete Custom Field records
+    for dt, fieldname in _NPD_MANAGEMENT_CUSTOM_FIELDS:
+        cf_name = frappe.db.get_value(
+            "Custom Field", {"dt": dt, "fieldname": fieldname}
+        )
+        if cf_name:
+            frappe.delete_doc(
+                "Custom Field", cf_name,
+                ignore_missing=True, ignore_permissions=True, force=True
+            )
+            frappe.logger().info(f"  Deleted Custom Field: {dt} → {fieldname}")
+
+    # 2. Drop any orphaned physical tables
+    for table in _NPD_MANAGEMENT_ORPHAN_TABLES:
+        if frappe.db.table_exists(table):
+            frappe.db.sql(f"DROP TABLE IF EXISTS `{table}`")
+            frappe.logger().info(f"  Dropped orphan table: {table}")
+
+    frappe.db.commit()
+    frappe.logger().info("npd_management: before_uninstall cleanup complete.")
 
 
 def get_custom_fields():
@@ -114,41 +212,6 @@ def get_custom_fields():
                 "no_copy": 1,
                 "read_only": 1,
                 "description": "Summary field: kcal per 100g from the active nutritional profile."
-            }
-        ],
-        "NPD Item": [
-            {
-                "fieldname": "npdi_section_nutrition",
-                "label": "Nutritional Information (NPD)",
-                "fieldtype": "Section Break",
-                "insert_after": "published_in_website",
-                "collapsible": 1,
-                "collapsible_depends_on": "eval:doc.npdi_default_nutritional_profile"
-            },
-            {
-                "fieldname": "npdi_default_nutritional_profile",
-                "label": "Active Nutritional Profile",
-                "fieldtype": "Link",
-                "options": "Nutritional Profile",
-                "insert_after": "npdi_section_nutrition",
-                "no_copy": 1,
-                "read_only": 1,
-                "description": "The default NPD Nutritional Profile for this item."
-            },
-            {
-                "fieldname": "npdi_include_in_nutrient_calc",
-                "label": "Include in Nutrient Calculation",
-                "fieldtype": "Check",
-                "insert_after": "npdi_default_nutritional_profile",
-                "default": "1"
-            },
-            {
-                "fieldname": "npdi_nutrition_per_100g_kcal",
-                "label": "Energy (kcal / 100g)",
-                "fieldtype": "Float",
-                "insert_after": "npdi_include_in_nutrient_calc",
-                "no_copy": 1,
-                "read_only": 1
             }
         ],
         "BOM": [

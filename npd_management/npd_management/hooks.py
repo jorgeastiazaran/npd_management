@@ -26,6 +26,8 @@ fixtures = [
 
 # after_install: runs once when the app is first installed on a new site
 after_install = "npd_management.setup.install.after_install"
+# before_uninstall: runs before the app is removed — cleans up Custom Fields
+before_uninstall = "npd_management.setup.install.before_uninstall"
 
 doc_events = {
     "Item": {
