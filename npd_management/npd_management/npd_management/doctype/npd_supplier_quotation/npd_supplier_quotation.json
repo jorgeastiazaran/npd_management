@@ -289,14 +289,16 @@
             "fieldtype": "Check",
             "label": "Promoted to Supplier Quotation",
             "default": "0",
-            "read_only": 1
+            "read_only": 1,
+            "allow_on_submit": 1
         },
         {
             "fieldname": "linked_sq",
             "fieldtype": "Link",
             "label": "Linked Supplier Quotation",
             "options": "Supplier Quotation",
-            "read_only": 1
+            "read_only": 1,
+            "allow_on_submit": 1
         }
     ],
     "permissions": [

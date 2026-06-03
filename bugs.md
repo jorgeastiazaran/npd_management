@@ -1,17 +1,12 @@
-# Resolved Bugs: `npd_management`
+# Bugs: `npd_management`
 
-All bugs and defects identified in the `npd_management` codebase have been successfully resolved:
+- I succesfully created the npd item NPD-MP-00011
+- I created the nutritional profile for the npd item NPD-MP-00011, but forgot to check "is_default" and submitetd it. 
+    - I think that there should be a logic in which "is_default" should be set as 1 as default for new nutritional profiles. 
+    - Additionally this field should be allowed to modify after submit and Once a nutritional profile is set as default and submitted/updated, the "is_default" field of all other nutritional profiles for the same npd_item/item should be set to 0.
+- I created NPD-MP-00009 and NPD-MP-00010 and created nutritional profiles for them. then created a nutritional profile for each and manually set "is default" as true and submitted/updated.
+  - When I promoted both items (each at a time) only the Item created from NPD-MP-00010 (MP-00010) replicated a new nutritional profile based on it predecesor nutritional profile. the one created from NPD-MP-00009 (MP-00009) did not replicate the nutritional profile.
 
-## 1. Stale Test Suite References (`test_nutrition_rollup.py`) — **[RESOLVED]**
-* **File:** [test_nutrition_rollup.py](file:///Users/jorgeastiazaran/Library/CloudStorage/GoogleDrive-tecnofoodmx@gmail.com/My%20Drive/PycharmProjects/erpnext_v13_testing_local_instance/npd_management/npd_management/api/test_nutrition_rollup.py)
-* **Description:** The test file imported and attempted to manipulate the old doctype `NPD Nutritional Profile` and SQL table `tabNPD Nutritional Profile` throughout. 
-* **Fix Applied:** 
-  1. Updated all references of `NPD Nutritional Profile` to `Nutritional Profile` and `tabNPD Nutritional Profile` to `tabNutritional Profile`.
-  2. Aligned link references to use the correct schema attributes (`reference_doctype` and `reference_name`) rather than old custom columns (`npd_item` / `item_code`).
-  3. Switched mock NPD Item creation from `.insert()` to `.db_insert()` with explicit `name` keys and `"npdi_include_in_nutrient_calc": 1` to bypass dynamic link autonaming series conflicts.
-  4. Added a fallback in the core rollup engine `get_kg_conversion_factor` to use static UOM constants (e.g. `0.001` for `g` to `Kg`) if no database UOM table entry is configured for an item.
 
-## 2. Hardcoded Site Name in `create_trial_note.py` — **[RESOLVED]**
-* **File:** [create_trial_note.py](file:///Users/jorgeastiazaran/Library/CloudStorage/GoogleDrive-tecnofoodmx@gmail.com/My%20Drive/PycharmProjects/erpnext_v13_testing_local_instance/npd_management/npd_management/npd_management/create_trial_note.py#L4)
-* **Description:** The setup script initialized Frappe with a hardcoded site: `frappe.init(site="test.localhost", sites_path="sites")`.
-* **Fix Applied:** Modified the file to dynamically resolve the active site name by checking if `frappe.local.site` is already initialized, or falling back to reading the bench container's `sites/currentsite.txt` configuration dynamically.
+
+- I created an NPD BOM from 3 NPD items (all of which I had previously promoted) and then tried to promote the NPD-BOM but got the error "AttributeError: 'NPDBOM' object has no attribute 'is_promoted'"

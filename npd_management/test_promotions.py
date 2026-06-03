@@ -5,6 +5,13 @@ from frappe.utils import flt
 def run_tests():
     print("=== STARTING NPD TO ERP PROMOTION TESTS ===")
     
+    # Ensure UOM 'g' exists
+    if not frappe.db.exists("UOM", "g"):
+        frappe.get_doc({
+            "doctype": "UOM",
+            "uom_name": "g"
+        }).insert(ignore_permissions=True)
+
     # Ensure Item Group 'All Item Groups' exists
     if not frappe.db.exists("Item Group", "All Item Groups"):
         frappe.get_doc({
@@ -134,19 +141,42 @@ def run_tests():
     assert npd_supplier.linked_supplier == erp_supplier.name, "NPD Supplier linked_supplier mismatch"
 
     print("Step 3: Test NPD Quotation to Quotation promotion")
+    # Ensure test customer exists
+    if not frappe.db.exists("Customer", "TEST-PROMOTE-CUSTOMER-1"):
+        if not frappe.db.exists("Customer Group", "All Customer Groups"):
+            frappe.get_doc({
+                "doctype": "Customer Group",
+                "customer_group_name": "All Customer Groups",
+                "is_group": 1
+            }).insert(ignore_permissions=True)
+        if not frappe.db.exists("Territory", "All Territories"):
+            frappe.get_doc({
+                "doctype": "Territory",
+                "territory_name": "All Territories",
+                "is_group": 1
+            }).insert(ignore_permissions=True)
+
+        frappe.get_doc({
+            "doctype": "Customer",
+            "customer_name": "TEST-PROMOTE-CUSTOMER-1",
+            "customer_group": "All Customer Groups",
+            "territory": "All Territories"
+        }).insert(ignore_permissions=True)
+
     # Create source NPD Quotation
     npd_qtn = frappe.get_doc({
         "doctype": "NPD Quotation",
         "name": "TEST-PROMOTE-NPD-QTN-1",
         "status": "Approved",
-        "customer_name": "Test Customer",
+        "quotation_to": "Customer",
+        "party_name": "TEST-PROMOTE-CUSTOMER-1",
         "transaction_date": "2026-05-26",
         "valid_till": "2026-06-26",
         "company": "TechFood",
         "currency": "MXN",
         "items": [
             {
-                "item_code": npd_item_name,
+                "npd_item": npd_item_name,
                 "qty": 100,
                 "rate": 2.5
             }
@@ -154,14 +184,28 @@ def run_tests():
     }).insert(ignore_permissions=True)
     
     # Create standard Quotation linking to it
+    if not frappe.db.exists("Price List", "Standard Selling"):
+        frappe.get_doc({
+            "doctype": "Price List",
+            "price_list_name": "Standard Selling",
+            "enabled": 1,
+            "buying": 0,
+            "selling": 1,
+            "currency": "MXN"
+        }).insert(ignore_permissions=True)
+
     erp_qtn = frappe.get_doc({
         "doctype": "Quotation",
         "quotation_to": "Customer",
-        "party_name": "Test Customer",
+        "party_name": "TEST-PROMOTE-CUSTOMER-1",
         "transaction_date": "2026-05-26",
         "valid_till": "2026-06-26",
         "company": "TechFood",
         "currency": "MXN",
+        "selling_price_list": "Standard Selling",
+        "price_list_currency": "MXN",
+        "plc_conversion_rate": 1.0,
+        "conversion_rate": 1.0,
         "custom_npd_quotation_reference": npd_qtn.name,
         "items": [
             {
@@ -190,27 +234,46 @@ def run_tests():
         "transaction_date": "2026-05-26",
         "company": "TechFood",
         "currency": "MXN",
+        "status": "Draft",
         "items": [
             {
                 "item_code": npd_item_name,
                 "qty": 100,
+                "uom": "g",
                 "rate": 1.2
             }
         ]
     }).insert(ignore_permissions=True)
+    npd_sq.submit()
     
     # Create standard Supplier Quotation linking to it
+    if not frappe.db.exists("Price List", "Standard Buying"):
+        frappe.get_doc({
+            "doctype": "Price List",
+            "price_list_name": "Standard Buying",
+            "enabled": 1,
+            "buying": 1,
+            "selling": 0,
+            "currency": "MXN"
+        }).insert(ignore_permissions=True)
+
     erp_sq = frappe.get_doc({
         "doctype": "Supplier Quotation",
         "supplier": erp_supplier.name,
         "transaction_date": "2026-05-26",
         "company": "TechFood",
         "currency": "MXN",
+        "buying_price_list": "Standard Buying",
+        "price_list_currency": "MXN",
+        "plc_conversion_rate": 1.0,
+        "conversion_rate": 1.0,
         "custom_npd_sq_reference": npd_sq.name,
         "items": [
             {
                 "item_code": erp_item_code,
                 "qty": 100,
+                "uom": "g",
+                "warehouse": "Finished Goods - TF",
                 "rate": 1.2
             }
         ]
@@ -222,6 +285,95 @@ def run_tests():
     print(f"NPD SQ linked_sq: {npd_sq.linked_sq} (Expected: {erp_sq.name})")
     assert npd_sq.is_promoted == 1, "NPD Supplier Quotation should be marked as promoted"
     assert npd_sq.linked_sq == erp_sq.name, "NPD Supplier Quotation linked_sq mismatch"
+
+    print("Step 5: Test NPD BOM and locked Profile promotion")
+    # We will promote a new Item with a locked profile to verify the is_locked fix
+    locked_npd_item_name = "TEST-PROMOTE-NPD-LOCKED"
+    locked_npd_item = frappe.get_doc({
+        "doctype": "NPD Item",
+        "name": locked_npd_item_name,
+        "item_code": locked_npd_item_name,
+        "item_name": "Test Promote NPD Locked Item",
+        "item_group": "All Item Groups",
+        "stock_uom": "g",
+        "valuation_rate": 1.5,
+        "naming_series": "NPD-MP-",
+        "npdi_include_in_nutrient_calc": 1
+    }).db_insert()
+    
+    p_locked = frappe.get_doc({
+        "doctype": "Nutritional Profile",
+        "title": "TEST-NP-LOCKED",
+        "reference_doctype": "NPD Item",
+        "reference_name": locked_npd_item_name,
+        "is_default": 1,
+        "reference_quantity_g": 100,
+        "contenido_energetico_kcal": 200.0
+    }).insert(ignore_permissions=True)
+    
+    # Force lock it in DB to simulate submitted BOM lock
+    frappe.db.set_value("Nutritional Profile", p_locked.name, "is_locked", 1)
+    
+    # Try promoting the item with locked profile to verify the copy fix does not throw
+    locked_erp_item = frappe.get_doc({
+        "doctype": "Item",
+        "item_code": "TEST-PROMOTE-ERP-LOCKED",
+        "item_name": "Test Promote ERP Locked Item",
+        "item_group": "All Item Groups",
+        "stock_uom": "g",
+        "valuation_rate": 1.5,
+        "custom_npd_reference": locked_npd_item_name
+    }).insert(ignore_permissions=True)
+
+    print("Promotion with locked profile succeeded!")
+
+    # Create source NPD BOM
+    npd_bom = frappe.get_doc({
+        "doctype": "NPD BOM",
+        "item": erp_item_code,
+        "item_doctype": "Item",
+        "quantity": 1,
+        "company": "_Test Company with perpetual inventory",
+        "currency": "USD",
+        "conversion_rate": 1.0,
+        "items": [
+            {
+                "item_code": erp_item_code,
+                "item_doctype": "Item",
+                "qty": 1,
+                "uom": "g",
+                "stock_uom": "g"
+            }
+        ]
+    }).insert(ignore_permissions=True)
+    npd_bom.submit()
+    
+    npd_bom_name = npd_bom.name
+    
+    # Create standard BOM linking to it (simulate promotion)
+    erp_bom = frappe.get_doc({
+        "doctype": "BOM",
+        "item": erp_item_code,
+        "quantity": 1,
+        "company": "_Test Company with perpetual inventory",
+        "currency": "USD",
+        "conversion_rate": 1.0,
+        "custom_npd_bom_reference": npd_bom_name,
+        "items": [
+            {
+                "item_code": erp_item_code,
+                "qty": 1,
+                "uom": "g",
+                "stock_uom": "g"
+            }
+        ]
+    }).insert(ignore_permissions=True)
+    
+    npd_bom.reload()
+    print(f"NPD BOM is_promoted: {npd_bom.is_promoted} (Expected: 1)")
+    print(f"NPD BOM linked_item: {npd_bom.linked_item} (Expected: {erp_bom.name})")
+    assert npd_bom.is_promoted == 1, "NPD BOM should be marked as promoted"
+    assert npd_bom.linked_item == erp_bom.name, "NPD BOM linked_item mismatch"
 
     # Roll back transaction to keep the test environment clean
     frappe.db.rollback()

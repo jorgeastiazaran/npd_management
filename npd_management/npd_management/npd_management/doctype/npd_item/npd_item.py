@@ -111,6 +111,7 @@ class NPDItem(Document):
             new_profile = frappe.copy_doc(profile_doc)
             new_profile.reference_doctype = "Item"
             new_profile.reference_name = item_name
+            new_profile.is_locked = 0
             new_profile.insert(ignore_permissions=True)
 
 

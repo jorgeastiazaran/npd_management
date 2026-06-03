@@ -70,7 +70,8 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "0",
+   "allow_on_submit": 1,
+   "default": "1",
    "description": "Only one profile per item can be the default. Setting this will clear it from other profiles of the same item.",
    "fieldname": "is_default",
    "fieldtype": "Check",
