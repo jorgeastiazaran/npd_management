@@ -6,14 +6,14 @@ frappe.ui.form.on("NPD Supplier Quotation", {
                     __("Are you sure you want to promote this to a standard Supplier Quotation?"),
                     () => {
                         frappe.require("/assets/npd_management/js/npd_promotion.js", function() {
-npd_mgmt.open_promote_form(frm, {
-                        target_doctype: "Supplier Quotation",
-                        api_method: "npd_management.npd_management.doctype.npd_supplier_quotation.npd_supplier_quotation.get_promotion_data",
-                    }) => frm.reload_doc());
+                            npd_mgmt.open_promote_form(frm, {
+                                target_doctype: "Supplier Quotation",
+                                api_method: "npd_management.npd_management.doctype.npd_supplier_quotation.npd_supplier_quotation.get_promotion_data"
+                            });
+                        });
                     }
                 );
             }, __("Actions"));
         }
     }
 });
-                });

@@ -12,6 +12,8 @@
         "qty",
         "uom",
         "section_break1",
+        "price_list_rate",
+        "discount_percentage",
         "rate",
         "amount",
         "column_break2",
@@ -67,6 +69,18 @@
             "fieldname": "section_break1",
             "fieldtype": "Section Break",
             "label": "Pricing & Profitability"
+        },
+        {
+            "default": "0",
+            "fieldname": "price_list_rate",
+            "fieldtype": "Currency",
+            "label": "Price List Rate"
+        },
+        {
+            "default": "0",
+            "fieldname": "discount_percentage",
+            "fieldtype": "Percent",
+            "label": "Discount (%)"
         },
         {
             "default": "0",

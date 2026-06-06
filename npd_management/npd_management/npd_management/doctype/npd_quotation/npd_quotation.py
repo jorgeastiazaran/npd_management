@@ -2,6 +2,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
+from erpnext.stock.get_item_details import get_item_details
 
 class NPDQuotation(Document):
     def validate(self):
@@ -29,6 +30,9 @@ class NPDQuotation(Document):
         else:
             self.overall_gross_margin = 0.0
 
+    def before_submit(self):
+        self.status = "Submitted"
+
 
     @frappe.whitelist()
     @staticmethod
@@ -37,36 +41,84 @@ class NPDQuotation(Document):
         npd = frappe.get_doc("NPD Quotation", npd_item_name)
         if npd.is_promoted:
             frappe.throw(f"NPD Quotation <b>{npd_item_name}</b> has already been promoted.")
-        if npd.status != "Approved":
-            frappe.throw("Quotation status must be 'Approved' before promoting.")
+        if npd.status != "Submitted":
+            frappe.throw("Quotation status must be 'Submitted' before promoting.")
         if not npd.get("items"):
             frappe.throw("Cannot promote an empty quotation.")
 
         items = []
+        taxes = []
         for row in npd.get("items"):
             npd_item_doc = frappe.get_doc("NPD Item", row.npd_item)
             if not npd_item_doc.linked_item:
                 frappe.throw(
                     f"Row #{row.idx}: NPD Item <b>{row.npd_item}</b> must be promoted to an Item first."
                 )
-            items.append({
+            item_args = frappe._dict({
                 "item_code": npd_item_doc.linked_item,
+                "company": npd.company,
+                "qty": row.qty,
+                "customer": npd.party_name if npd.quotation_to == "Customer" else None,
+                "doctype": "Quotation",
+                "name": npd.name,
+                "price_list": npd.selling_price_list,
+                "currency": npd.currency,
+                "conversion_rate": npd.conversion_rate or 1.0,
+                "price_list_currency": npd.price_list_currency,
+                "plc_conversion_rate": npd.plc_conversion_rate or 1.0,
+                "transaction_date": npd.transaction_date,
+            })
+            
+            try:
+                details = get_item_details(item_args)
+            except Exception:
+                details = {}
+                
+            mapped_row = details.copy()
+            for key in ["doctype", "name", "parent", "parenttype", "parentfield", "idx"]:
+                mapped_row.pop(key, None)
+            mapped_row.update({
+                "item_code": npd_item_doc.linked_item,
+                "item_name": details.get("item_name") or npd_item_doc.linked_item,
                 "qty": row.qty,
                 "rate": row.rate,
-                "uom": row.uom or npd_item_doc.stock_uom,
+                "price_list_rate": row.price_list_rate,
+                "discount_percentage": row.discount_percentage,
+                "uom": row.uom or npd_item_doc.stock_uom or details.get("uom"),
+                "description": row.description or details.get("description", ""),
+            })
+            items.append(mapped_row)
+
+        for row in npd.get("taxes"):
+            taxes.append({
+                "charge_type": row.charge_type,
+                "account_head": row.account_head,
                 "description": row.description,
+                "cost_center": row.cost_center,
+                "rate": row.rate,
+                "tax_amount": row.tax_amount,
             })
 
         return {
             "doctype": "Quotation",
             "quotation_to": npd.quotation_to,
             "party_name": npd.party_name,
+            "project": npd.project,
             "transaction_date": str(npd.transaction_date) if npd.transaction_date else None,
             "valid_till": str(npd.valid_till) if npd.valid_till else None,
+            "selling_price_list": npd.selling_price_list,
+            "price_list_currency": npd.price_list_currency,
+            "plc_conversion_rate": npd.plc_conversion_rate,
             "currency": npd.currency,
+            "conversion_rate": npd.conversion_rate,
+            "additional_discount_percentage": npd.additional_discount_percentage,
+            "taxes_and_charges": npd.taxes_and_charges,
+            "tc_name": npd.tc_name,
+            "terms": npd.terms,
             "company": npd.company,
             "order_type": "Sales",
             "items": items,
+            "taxes": taxes,
             "custom_npd_quotation_reference": npd.name,
         }
 
@@ -76,8 +128,8 @@ class NPDQuotation(Document):
         if self.is_promoted:
             frappe.throw("This quotation has already been promoted to a standard Sales Quotation.")
             
-        if self.status != "Approved":
-            frappe.throw("Quotation status must be 'Approved' before executing final sales pipeline mapping.")
+        if self.status != "Submitted":
+            frappe.throw("Quotation status must be 'Submitted' before executing final sales pipeline mapping.")
             
         if not self.get("items"):
             frappe.throw("Cannot promote an empty quotation. Please add experimental candidate formulation items.")
@@ -90,10 +142,19 @@ class NPDQuotation(Document):
             qtn = frappe.new_doc("Quotation")
             qtn.quotation_to = self.quotation_to
             qtn.party_name = self.party_name
+            qtn.project = self.project
             qtn.transaction_date = self.transaction_date
             if self.valid_till:
                 qtn.valid_till = self.valid_till
+            qtn.selling_price_list = self.selling_price_list
+            qtn.price_list_currency = self.price_list_currency
+            qtn.plc_conversion_rate = self.plc_conversion_rate
             qtn.currency = self.currency
+            qtn.conversion_rate = self.conversion_rate
+            qtn.additional_discount_percentage = self.additional_discount_percentage
+            qtn.taxes_and_charges = self.taxes_and_charges
+            qtn.tc_name = self.tc_name
+            qtn.terms = self.terms
             qtn.company = self.company
             qtn.order_type = "Sales"
             
@@ -106,12 +167,49 @@ class NPDQuotation(Document):
                         "All candidate items must be established in production inventory prior to pipeline bidding mapping."
                     )
                     
-                qtn.append("items", {
+                item_args = frappe._dict({
                     "item_code": npd_item_doc.linked_item,
+                    "company": self.company,
+                    "qty": row.qty,
+                    "customer": self.party_name if self.quotation_to == "Customer" else None,
+                    "doctype": "Quotation",
+                    "name": self.name,
+                    "price_list": self.selling_price_list,
+                    "currency": self.currency,
+                    "conversion_rate": self.conversion_rate or 1.0,
+                    "price_list_currency": self.price_list_currency,
+                    "plc_conversion_rate": self.plc_conversion_rate or 1.0,
+                    "transaction_date": self.transaction_date,
+                })
+                
+                try:
+                    details = get_item_details(item_args)
+                except Exception:
+                    details = {}
+                    
+                mapped_row = details.copy()
+                for key in ["doctype", "name", "parent", "parenttype", "parentfield", "idx"]:
+                    mapped_row.pop(key, None)
+                mapped_row.update({
+                    "item_code": npd_item_doc.linked_item,
+                    "item_name": details.get("item_name") or npd_item_doc.linked_item,
                     "qty": row.qty,
                     "rate": row.rate,
-                    "uom": row.uom or npd_item_doc.stock_uom,
-                    "description": row.description
+                    "price_list_rate": row.price_list_rate,
+                    "discount_percentage": row.discount_percentage,
+                    "uom": row.uom or npd_item_doc.stock_uom or details.get("uom"),
+                    "description": row.description or details.get("description", "")
+                })
+                qtn.append("items", mapped_row)
+                
+            for row in self.get("taxes"):
+                qtn.append("taxes", {
+                    "charge_type": row.charge_type,
+                    "account_head": row.account_head,
+                    "description": row.description,
+                    "cost_center": row.cost_center,
+                    "rate": row.rate,
+                    "tax_amount": row.tax_amount,
                 })
                 
             # Insert standard document directly into database
@@ -138,12 +236,12 @@ def get_formula_estimated_cost(npd_item):
         return 0.0
         
     # Attempt to locate linked experimental BOM candidates matching this item
-    boms = frappe.get_all("BOM", filters={"item": npd_item, "is_npd_bom": 1, "docstatus": 1}, fields=["name", "total_cost"], order_by="modified desc", limit=1)
+    boms = frappe.get_all("NPD BOM", filters={"item": npd_item, "docstatus": 1}, fields=["name", "total_cost"], order_by="modified desc", limit=1)
     if boms:
         return flt(boms[0].total_cost)
         
     # Fallback check standard/draft BOMs
-    draft_boms = frappe.get_all("BOM", filters={"item": npd_item, "is_npd_bom": 1}, fields=["name", "total_cost"], order_by="modified desc", limit=1)
+    draft_boms = frappe.get_all("NPD BOM", filters={"item": npd_item}, fields=["name", "total_cost"], order_by="modified desc", limit=1)
     if draft_boms:
         return flt(draft_boms[0].total_cost)
         

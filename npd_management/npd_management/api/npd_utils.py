@@ -141,11 +141,10 @@ def link_promoted_item(doc, method=None):
     npd_item = frappe.get_doc("NPD Item", doc.custom_npd_reference)
 
     # Mark NPD Item as promoted
-    npd_item.is_promoted = 1
-    npd_item.linked_item = doc.name
+    npd_item.db_set("is_promoted", 1)
+    npd_item.db_set("linked_item", doc.name)
     if not npd_item.item_code:
-        npd_item.item_code = doc.name
-    npd_item.save(ignore_permissions=True)
+        npd_item.db_set("item_code", doc.name)
     frappe.logger().info(f"Successfully linked promoted Item {doc.name} back to NPD Item {npd_item.name}")
 
     # Copy Nutritional Profiles from NPD Item to the new Item
@@ -173,9 +172,8 @@ def _mark_promoted(npd_doctype, ref_field, doc, linked_field, production_doc_nam
     if not frappe.db.exists(npd_doctype, ref_value):
         return
     npd_doc = frappe.get_doc(npd_doctype, ref_value)
-    npd_doc.is_promoted = 1
-    npd_doc.set(linked_field, production_doc_name)
-    npd_doc.save(ignore_permissions=True)
+    npd_doc.db_set("is_promoted", 1)
+    npd_doc.db_set(linked_field, production_doc_name)
     frappe.logger().info(f"Linked {npd_doctype} {ref_value} → {production_doc_name}")
 
 
@@ -190,9 +188,8 @@ def link_promoted_supplier(doc, method=None):
     if not ref_value or not frappe.db.exists("NPD Supplier", ref_value):
         return
     npd_supplier = frappe.get_doc("NPD Supplier", ref_value)
-    npd_supplier.is_promoted = 1
-    npd_supplier.linked_supplier = doc.name
-    npd_supplier.save(ignore_permissions=True)
+    npd_supplier.db_set("is_promoted", 1)
+    npd_supplier.db_set("linked_supplier", doc.name)
     frappe.logger().info(f"Linked NPD Supplier {ref_value} → {doc.name}")
 
 
@@ -207,10 +204,9 @@ def link_promoted_quotation(doc, method=None):
     if not ref_value or not frappe.db.exists("NPD Quotation", ref_value):
         return
     npd_qtn = frappe.get_doc("NPD Quotation", ref_value)
-    npd_qtn.is_promoted = 1
-    npd_qtn.promoted_quotation = doc.name
-    npd_qtn.status = "Promoted"
-    npd_qtn.save(ignore_permissions=True)
+    npd_qtn.db_set("is_promoted", 1)
+    npd_qtn.db_set("promoted_quotation", doc.name)
+    npd_qtn.db_set("status", "Promoted")
     frappe.logger().info(f"Linked NPD Quotation {ref_value} → {doc.name}")
 
 

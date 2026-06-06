@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 from frappe.model.document import Document
 import frappe
-
+from frappe.contacts.address_and_contact import load_address_and_contact, delete_contact_and_address
 
 class NPDSupplier(Document):
+    def onload(self):
+        load_address_and_contact(self)
+
+    def on_trash(self):
+        delete_contact_and_address("NPD Supplier", self.name)
+
     def validate(self):
         if self.is_promoted and not self.linked_supplier:
             frappe.throw("Linked Supplier is required when is_promoted is set.")

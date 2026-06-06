@@ -16,6 +16,11 @@
         "valid_till",
         "currency",
         "company",
+        "project",
+        "selling_price_list",
+        "price_list_currency",
+        "plc_conversion_rate",
+        "conversion_rate",
         "section_break_items",
         "items",
         "section_break_totals",
@@ -23,11 +28,19 @@
         "total_estimated_cost",
         "column_break_totals",
         "overall_gross_margin",
+        "additional_discount_percentage",
+        "section_break_taxes",
+        "taxes_and_charges",
+        "taxes",
+        "section_break_terms",
+        "tc_name",
+        "terms",
         "section_break_status",
         "status",
         "is_promoted",
         "column_break_status",
-        "promoted_quotation"
+        "promoted_quotation",
+        "amended_from"
     ],
     "fields": [
         {
@@ -56,7 +69,6 @@
         },
         {
             "depends_on": "eval:doc.quotation_to=='Customer'",
-            "fetch_from": "party_name.customer_name",
             "fieldname": "customer_name",
             "fieldtype": "Data",
             "label": "Customer Name",
@@ -64,7 +76,6 @@
         },
         {
             "depends_on": "eval:doc.quotation_to=='Lead'",
-            "fetch_from": "party_name.lead_name",
             "fieldname": "lead_name",
             "fieldtype": "Data",
             "label": "Lead Name",
@@ -100,6 +111,36 @@
             "label": "Company",
             "options": "Company",
             "reqd": 1
+        },
+        {
+            "fieldname": "project",
+            "fieldtype": "Link",
+            "label": "Project",
+            "options": "Project"
+        },
+        {
+            "fieldname": "selling_price_list",
+            "fieldtype": "Link",
+            "label": "Price List",
+            "options": "Price List"
+        },
+        {
+            "fieldname": "price_list_currency",
+            "fieldtype": "Link",
+            "label": "Price List Currency",
+            "options": "Currency"
+        },
+        {
+            "default": "1.0",
+            "fieldname": "plc_conversion_rate",
+            "fieldtype": "Float",
+            "label": "Price List Exchange Rate"
+        },
+        {
+            "default": "1.0",
+            "fieldname": "conversion_rate",
+            "fieldtype": "Float",
+            "label": "Exchange Rate"
         },
         {
             "fieldname": "section_break_items",
@@ -144,17 +185,56 @@
             "read_only": 1
         },
         {
+            "fieldname": "additional_discount_percentage",
+            "fieldtype": "Float",
+            "label": "Additional Discount Percentage"
+        },
+        {
+            "fieldname": "section_break_taxes",
+            "fieldtype": "Section Break",
+            "label": "Taxes and Charges"
+        },
+        {
+            "fieldname": "taxes_and_charges",
+            "fieldtype": "Link",
+            "label": "Sales Taxes and Charges Template",
+            "options": "Sales Taxes and Charges Template"
+        },
+        {
+            "fieldname": "taxes",
+            "fieldtype": "Table",
+            "label": "Sales Taxes and Charges",
+            "options": "Sales Taxes and Charges"
+        },
+        {
+            "fieldname": "section_break_terms",
+            "fieldtype": "Section Break",
+            "label": "Terms and Conditions"
+        },
+        {
+            "fieldname": "tc_name",
+            "fieldtype": "Link",
+            "label": "Terms and Conditions",
+            "options": "Terms and Conditions"
+        },
+        {
+            "fieldname": "terms",
+            "fieldtype": "Text Editor",
+            "label": "Terms"
+        },
+        {
             "fieldname": "section_break_status",
             "fieldtype": "Section Break",
             "label": "Lifecycle Tracking"
         },
         {
+            "allow_on_submit": 1,
             "default": "Draft",
             "fieldname": "status",
             "fieldtype": "Select",
             "in_list_view": 1,
             "label": "Status",
-            "options": "Draft\nApproved\nPromoted",
+            "options": "Draft\nSubmitted\nPromoted",
             "read_only": 1
         },
         {
@@ -175,8 +255,18 @@
             "label": "Promoted Sales Quotation",
             "options": "Quotation",
             "read_only": 1
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "Amended From",
+            "no_copy": 1,
+            "options": "NPD Quotation",
+            "print_hide": 1,
+            "read_only": 1
         }
     ],
+    "is_submittable": 1,
     "issingle": 0,
     "istable": 0,
     "links": [],
@@ -193,6 +283,8 @@
             "read": 1,
             "role": "System Manager",
             "share": 1,
+            "submit": 1,
+            "cancel": 1,
             "write": 1
         }
     ],

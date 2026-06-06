@@ -7,10 +7,10 @@ class NPDSupplierQuotation(Document):
     def validate(self):
         self._calculate_totals()
 
-    def on_submit(self):
+    def before_submit(self):
         self.status = "Submitted"
 
-    def on_cancel(self):
+    def before_cancel(self):
         self.status = "Cancelled"
 
     def _calculate_totals(self):
