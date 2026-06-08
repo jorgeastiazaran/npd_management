@@ -19,10 +19,10 @@ El sistema gestiona de manera centralizada la viabilidad técnica y financiera, 
 
 ## 💻 Requisitos del Sistema
 
-- **Framework Frappe:** Versión 14 o 15.
-- **ERPNext:** Versión 14 o 15.
-- **Python:** 3.10 o superior.
-- **Node.js:** 16+ (para assets).
+- **Framework Frappe:** Versión 13.
+- **ERPNext:** Versión 13.
+- **Python:** 3.7 o superior.
+- **Node.js:** 14+ (para assets).
 - **Redis & MariaDB:** Estándares del ecosistema Frappe.
 
 ## ⚙️ Instrucciones de Instalación
