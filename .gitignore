@@ -30,3 +30,8 @@ internal_testing/
 # Developer scratchpads, working logs, and offline database snapshot dumps
 internal_notes/
 project_docs/
+
+# Testing & Reporting Folders
+scratch/
+testing_plans/
+work_reports/

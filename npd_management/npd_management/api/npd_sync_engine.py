@@ -6,6 +6,7 @@ from npd_management.api.npd_utils import make_api_request
 @frappe.whitelist()
 def sync_master_data():
     """Recursively resolves and syncs all dependencies for core NPD doctypes."""
+    frappe.only_for("System Manager")
     # Starting points
     seeds = [
         "Item", "BOM", "Warehouse", "UOM", "Company", "Project", 
@@ -20,7 +21,7 @@ def sync_master_data():
         dt = queue.pop(0)
         if dt in synced_meta: continue
         
-        print(f"Analyzing dependencies for {dt}...")
+        frappe.logger().info(f"Analyzing dependencies for {dt}...")
         # Force fetch schema even if it exists locally for core seeds to capture production fields
         force_fetch = dt in seeds
         deps = sync_meta_and_get_deps(dt, force_fetch=force_fetch)
@@ -60,12 +61,12 @@ def sync_meta_and_get_deps(doctype, force_fetch=False):
                 local_doc = frappe.get_doc("DocType", doctype)
                 local_doc.update(doc_data)
                 local_doc.save(ignore_permissions=True)
-                print(f"  - Updated DocType schema: {doctype}")
+                frappe.logger().info(f"  - Updated DocType schema: {doctype}")
             else:
                 frappe.get_doc(doc_data).insert(ignore_if_duplicate=True)
-                print(f"  - Synced DocType schema: {doctype}")
+                frappe.logger().info(f"  - Synced DocType schema: {doctype}")
         except Exception as e:
-            print(f"  - Could not fetch schema for {doctype}: {str(e)}")
+            frappe.logger().info(f"  - Could not fetch schema for {doctype}: {str(e)}")
             return []
 
     # B. Sync Custom Fields for this DocType
@@ -131,7 +132,7 @@ def sync_doctype_records(doctype, filters=None):
                     new_doc.flags.ignore_links = True # Skip deep validation of linked docs we haven't synced yet
                     new_doc.flags.ignore_validate = True
                     new_doc.insert(ignore_if_duplicate=True)
-                    print(f"Synced {doctype} {name}")
+                    frappe.logger().info(f"Synced {doctype} {name}")
                     synced += 1
                     time.sleep(0.2) # Small delay to prevent rate limiting
                 except Exception as e:

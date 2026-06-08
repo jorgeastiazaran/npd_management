@@ -35,7 +35,7 @@ def get_kg_conversion_factor(item_code, item_doctype):
     This corresponds to multiplying stock_qty by (1.0 / conversion_factor).
     """
     try:
-        doc = frappe.get_doc(item_doctype, item_code)
+        doc = frappe.get_cached_doc(item_doctype, item_code)
     except frappe.DoesNotExistError:
         return 0.0
     stock_uom = doc.get("stock_uom") or ""
@@ -70,7 +70,7 @@ def check_missing_kg_conversions(items, item_doctype_key="item_doctype", default
 
         item_type = _row_attr(item, item_doctype_key) or default_item_doctype
         try:
-            doc = frappe.get_doc(item_type, item_code)
+            doc = frappe.get_cached_doc(item_type, item_code)
         except frappe.DoesNotExistError:
             seen.add(item_code)
             continue
@@ -133,6 +133,10 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
     totals = {field: 0.0 for field in NUTRITIONAL_FIELDS}
     total_weight_kg = 0.0
     warnings = []
+    
+    # Memoization caches
+    profile_cache = {}
+    kg_multiplier_cache = {}
 
     for item in items or []:
         if not flt(_row_attr(item, "include_in_nutrient_calc", 1)):
@@ -146,10 +150,15 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
         npd_item_code = item_code if item_type == "NPD Item" else None
         erpnext_item_code = item_code if item_type != "NPD Item" else None
 
-        if npd_item_code:
-            profile = get_active_profile(npd_item=npd_item_code)
+        cache_key = (npd_item_code, erpnext_item_code)
+        if cache_key in profile_cache:
+            profile = profile_cache[cache_key]
         else:
-            profile = get_active_profile(item_code=erpnext_item_code)
+            if npd_item_code:
+                profile = get_active_profile(npd_item=npd_item_code)
+            else:
+                profile = get_active_profile(item_code=erpnext_item_code)
+            profile_cache[cache_key] = profile
 
         if not profile:
             continue
@@ -183,7 +192,11 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
             conv = flt(_row_attr(item, "conversion_factor") or 1.0)
             stock_qty = qty * conv
 
-        kg_multiplier = get_kg_conversion_factor(item_code, item_type)
+        conv_cache_key = (item_code, item_type)
+        if conv_cache_key not in kg_multiplier_cache:
+            kg_multiplier_cache[conv_cache_key] = get_kg_conversion_factor(item_code, item_type)
+            
+        kg_multiplier = kg_multiplier_cache[conv_cache_key]
         weight_kg = stock_qty * kg_multiplier
         
         if weight_kg <= 0:

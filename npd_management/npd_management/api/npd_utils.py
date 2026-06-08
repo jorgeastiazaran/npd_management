@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import frappe
-from frappe.utils import get_url, flt
+from frappe.utils import flt
 import requests
 import json
 
@@ -161,7 +161,7 @@ def link_promoted_item(doc, method=None):
             new_profile.is_locked = 0
             new_profile.insert(ignore_permissions=True)
         except Exception:
-            frappe.log_error(frappe.get_traceback(), "NPD Profile Copy Error")
+            frappe.log_error(frappe.get_traceback(), f"NPD Profile Copy Failed for {doc.name}")
 
 
 def _mark_promoted(npd_doctype, ref_field, doc, linked_field, production_doc_name):
