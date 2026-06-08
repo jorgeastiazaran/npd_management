@@ -1,78 +1,65 @@
-# NPD Management — ERPNext Product Lifecycle Sandbox
+# NPD Management (Gestión de Desarrollo de Nuevos Productos)
 
-An advanced, fully integrated **New Product Development (NPD)** module built for ERPNext and the Frappe Framework. 
+Una aplicación integral y robusta para **ERPNext** diseñada específicamente para orquestar y controlar todo el ciclo de vida de **Desarrollo de Nuevos Productos (NPD)** en industrias de alimentos, bebidas y manufactura.
 
-This application introduces a secure **R&D Sandbox Testing Layer** that perfectly mirrors your active production inventory structures while operating in total isolation from the financial master ledger. Formulators, laboratory engineers, and trial managers can design multi-level experimental formulations (`NPD BOM`), simulate manufacturing production orders (`NPD Trial`), execute experimental sourcing RFQs, and apply strict quality inspection matrices without cluttering your core enterprise item catalogs or impacting live accounting valuations.
+## 📖 Descripción Detallada
 
----
+La aplicación **NPD Management** extiende las capacidades de ERPNext proporcionando flujos de trabajo dedicados para transformar una simple idea en un producto comercialmente viable y listo para su lanzamiento. 
 
-## 🏗️ Repository Architecture
+El sistema gestiona de manera centralizada la viabilidad técnica y financiera, las iteraciones de formulación, las cotizaciones de insumos, las inspecciones de calidad, y las pruebas piloto, asegurando que todos los departamentos (I+D, Finanzas, Calidad, Compras y Producción) estén alineados bajo una misma fuente de verdad.
 
-This repository is organized as a fully self-contained deployment suite containing both the core application code and the automated dynamic schema mirroring tools:
+### Características Principales:
+- **Gestión de Ideas (NPD Idea):** Recolección, evaluación preliminar y aprobación de nuevas ideas de productos.
+- **Formulación e Iteraciones (NPD Formula):** Control de versiones y recetas para el departamento de I+D, incluyendo el manejo de perfiles nutricionales y alérgenos de cada ingrediente.
+- **Rollup Nutricional Automático:** Cálculo dinámico del perfil nutricional de una fórmula a partir de los valores de sus ingredientes.
+- **Pruebas de Calidad (NPD Quality Inspection):** Registro detallado de catas, análisis organolépticos y pruebas de vida de anaquel.
+- **Gestión de Proveedores (NPD Sourcing):** Control de cotizaciones, hojas técnicas y estatus de los ingredientes clave de manera independiente al módulo nativo de compras, ideal para la fase de prototipado.
+- **Pruebas Piloto y Escalamiento (NPD Trial):** Planificación, ejecución y documentación fotográfica/financiera de lotes piloto y corridas industriales.
+- **Validaciones Regulatorias (NPD Compliance):** Rastreo de normativas, certificaciones (ej. Orgánico, Kosher) y validación de etiquetado.
 
-```text
-├── npd_management/            # Core Frappe Custom Application code
-├── install_customized.py      # Automated Interactive Deployment Console wrapper
-├── extract_doctypes.py        # Dynamic Universal REST Schema Extractor engine
-├── finalize_doctypes.py       # R&D Structure & Options relinking logic
-├── project_docs/              # Complete Architectural Briefs & Specifications
-├── setup_test_site.sh         # Local Docker sandbox spin-up utility
-└── docker-compose.yml         # Containerized dev infrastructure blueprint
-```
+## 💻 Requisitos del Sistema
 
-### Core Application Components (`npd_management/`)
-* **Interactive Promotion Engine**: Frontend routing automation (`npd_item.js`) that safely sanitizes experimental prototypes and launches standard pre-filled production `Item` forms for final naming series selection.
-* **Two-Way Synchronization Hooks**: Background listeners (`hooks.py`) that monitor standard catalog commitments to automatically map promotion records back to original sandbox items.
-* **Pure Local Execution ORM**: Optimized API utility layers (`npd_utils.py`) that dynamically read and commit local MariaDB database records directly, guaranteeing zero latency.
+- **Framework Frappe:** Versión 14 o 15.
+- **ERPNext:** Versión 14 o 15.
+- **Python:** 3.10 o superior.
+- **Node.js:** 16+ (para assets).
+- **Redis & MariaDB:** Estándares del ecosistema Frappe.
 
----
+## ⚙️ Instrucciones de Instalación
 
-## 🚀 Installation Guide for External ERPNext Instances
+Para instalar `npd_management` en tu servidor o entorno local, sigue estos pasos desde la consola de tu usuario `frappe`:
 
-Because every enterprise customizes their operational master records (`Item`, `BOM`, `Work Order`, `Quality Inspection`, `Supplier`, `Quotation`) with unique internal fields and mandatory toggles, the custom application dynamically mirrors all of these standard layouts directly into their counterpart **NPD proxy schemas** (`NPD Item`, `NPD BOM`, `NPD Trial`, `NPD Quality Inspection`, `NPD Supplier`, `NPD Quotation`) precisely *before* final installation. This guarantees absolute structural parity and zero runtime upgrade conflicts.
-
-We provide a streamlined, automated deployment console script to orchestrate this end-to-end mapping seamlessly.
-
-### Prerequisites
-Depending on your preferred installation method, prepare one of the following:
-* **For Mode 1 (Automated Live Sync)**: An **API Key and API Secret** generated for a user with System Administrator access on your target instance. *(Note: These keys are utilized strictly as a one-time pre-installation extraction mechanism. Once compiled, the app drops all API reliance).*
-* **For Mode 2 (Offline CSV Import)**: No API credentials required. Simply download your site's target field layouts as pre-sorted CSV files via Frappe's native **"Customize Form"** download button.
-
-### Deployment Instructions
-
-#### 1. Clone the Repository
-Clone this package directly into your local deployment environment:
+### 1. Obtener la aplicación
+Descarga la aplicación a tu entorno de bench:
 ```bash
-git clone https://github.com/your-org/npd_erpnext.git
-cd npd_erpnext
+bench get-app https://github.com/jorgeastiazaran/npd_management.git
 ```
 
-#### 2. Launch the Automated Custom Installer
-Execute the self-contained installation console utility:
+### 2. Instalar en tu Sitio
+Asegúrate de saber el nombre del sitio de ERPNext donde deseas instalar el módulo (por ejemplo, `misitio.localhost`) e instálalo:
 ```bash
-python3 install_customized.py
+bench --site misitio.localhost install-app npd_management
 ```
 
-#### 3. Choose Your Synchronization Mode
-The script will present a choice between two explicit mapping methods:
-* **Option 1: Automated Live Sync**  
-  Prompts for your Target Site Name, local instance URL, and one-time Administrator API Credentials to programmatically extract active layout metadata (`tabCustom Field` overlays + `tabProperty Setter` properties) over the network.
-* **Option 2: Offline CSV Template Import**  
-  Allows bypassing network API loops entirely. You simply download your target site's custom layout as a pre-sorted CSV file natively via Frappe's **"Customize Form"** screen (using the Download button). During execution, the installation script will prompt you to provide the file paths for your exported layouts. It parses rows sequentially, maps headers flexibly, auto-hashes layout breaks, and merges your site's custom field definitions additively over the package proxy structures.
+### 3. Ejecutar Migraciones (Requerido)
+Para asegurar que todos los Custom Fields, DocTypes personalizados y lógicas internas se inyecten correctamente en la base de datos:
+```bash
+bench --site misitio.localhost migrate
+```
 
-#### 4. Automated Execution
-Once your synchronization path is complete, the console wrapper programmatically executes:
-1. **Schema Compilation**: Merges standard definitions with active layout properties while enforcing a rigorous metadata preservation policy (retaining hidden attributes like `unique`, `allow_on_submit`, `translatable`, and unlisted base fields).
-2. **Finalization & Mapping**: Injects custom experimental calculation sections (Costing Matrices, Nutritional Breakdowns) and automatically rewires parent-child layout relationships (`NPD BOM` child items).
-3. **Native Installation**: Executes the native bench application framework commit (`bench --site [site_name] install-app npd_management`) directly into your database.
+### 4. Limpiar Caché y Reiniciar
+```bash
+bench --site misitio.localhost clear-cache
+bench restart
+# Si usas docker-compose: docker-compose restart erpnext
+```
 
----
+## 🚀 Uso Rápido
 
-## 🔒 Pure Local Operation Mode
-Once successfully deployed, the application automatically drops all remote API connection loops. It operates directly as a standard, natively installed Frappe Custom App inside your local instance, reading and executing standard ORM instructions natively under role-based user access controls.
+1. Inicia sesión en ERPNext con permisos de Administrador o con un rol de "NPD Manager".
+2. Busca la sección o Workspace de **NPD Management** en el menú lateral.
+3. Comienza creando un nuevo registro en **NPD Idea** para evaluar una oportunidad de mercado.
+4. Una vez aprobada, conviértela en un **NPD Project** para rastrear todo el ciclo de formulación y pruebas.
 
----
-
-## 📚 Detailed Documentation
-For deep technical deep-dives into multi-level costing evaluation logic, nutritional rollup abstractions, and database entity decoupling schemas, review the full design brief:
-👉 [**Project Design Brief & Architecture**](project_docs/project_brief.md)
+## 🛠 Soporte y Contribución
+Para reportar fallos, problemas o solicitar nuevas características, por favor abre un _Issue_ en el repositorio de GitHub de este proyecto.
