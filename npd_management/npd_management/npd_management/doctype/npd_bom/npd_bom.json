@@ -1113,7 +1113,7 @@
             "oldfieldname": "bom_operations",
             "fieldtype": "Table",
             "oldfieldtype": "Table",
-            "options": "NPD BOM Operation",
+            "options": "BOM Operation",
             "search_index": 0,
             "hidden": 0,
             "set_only_once": 0,
