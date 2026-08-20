@@ -43,8 +43,7 @@ npd_mgmt.open_promote_form(frm, {
         
         // Step 1: Check for missing Kg conversions
         frappe.call({
-            method: "check_kg_conversions",
-            doc: frm.doc,
+            method: "npd_management.npd_management.doctype.npd_bom.npd_bom.check_kg_conversions",
             args: { items_json: JSON.stringify(frm.doc.items) },
             callback: function(r) {
                 let missing = r.message || [];
@@ -73,8 +72,7 @@ npd_mgmt.open_promote_form(frm, {
                             });
                             
                             frappe.call({
-                                method: "save_kg_conversions",
-                                doc: frm.doc,
+                                method: "npd_management.npd_management.doctype.npd_bom.npd_bom.save_kg_conversions",
                                 args: { conversions: JSON.stringify(conversions) },
                                 freeze: true,
                                 callback: function(r2) {
@@ -92,23 +90,25 @@ npd_mgmt.open_promote_form(frm, {
         });
     },
     _do_recalculate: function(frm) {
-        frm.call({
-            method: "calculate_nutritional_info",
-            doc: frm.doc,
-            callback: function(r) {
-                if (r.message && r.message.warnings && r.message.warnings.length > 0) {
-                    frappe.msgprint({
-                        title: __('Reference Quantity Discrepancy'),
-                        indicator: 'orange',
-                        message: r.message.warnings.join('<br><br>')
-                    });
+        if (!frm.doc.__islocal && frm.doc.name) {
+            frm.call({
+                method: "calculate_nutritional_info",
+                doc: frm.doc,
+                callback: function(r) {
+                    if (r.message && r.message.warnings && r.message.warnings.length > 0) {
+                        frappe.msgprint({
+                            title: __('Reference Quantity Discrepancy'),
+                            indicator: 'orange',
+                            message: r.message.warnings.join('<br><br>')
+                        });
+                    }
+                    frm.refresh_fields();
                 }
-                frm.refresh_fields();
-            }
-        });
+            });
+        }
     },
     rm_cost_as_per: function(frm) {
-        if (frm.doc.items && frm.doc.items.length > 0) {
+        if (frm.doc.items && frm.doc.items.length > 0 && !frm.doc.__islocal && frm.doc.name) {
             frm.call({
                 method: "calculate_cost",
                 doc: frm.doc,
@@ -167,14 +167,12 @@ frappe.ui.form.on("NPD BOM Item", {
         console.log("Fetching details for:", d.item_code);
 
         return frappe.call({
-            doc: frm.doc,
-            method: "get_bom_material_detail",
+            method: "npd_management.npd_management.doctype.npd_bom.npd_bom.get_bom_material_detail",
             args: {
                 item_code: d.item_code,
                 item_doctype: d.item_doctype || frm.doc.default_item_doctype || "NPD Item",
                 qty: d.qty || 1,
-                uom: d.uom,
-                stock_uom: d.stock_uom
+                conversion_rate: frm.doc.conversion_rate || 1
             },
             callback: function(r) {
                 console.log("Server response:", r);
