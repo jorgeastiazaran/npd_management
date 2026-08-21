@@ -39,6 +39,31 @@ frappe.ui.form.on("BOM", {
                 });
             }, __("Nutritional"));
         }
+        if (!frm.doc.__islocal && frm.doc.item) {
+            frm.add_custom_button(__("Create Nutritional Profile"), function() {
+                frappe.confirm(
+                    __("Create a new Nutritional Profile for <b>{0}</b> using the calculated values from this BOM?", [frm.doc.item]),
+                    function() {
+                        frappe.call({
+                            method: "npd_management.bom_nutrition.create_nutritional_profile_from_bom",
+                            args: { bom_name: frm.doc.name },
+                            freeze: true,
+                            freeze_message: __("Creating Nutritional Profile..."),
+                            callback: function(r) {
+                                if (r.message) {
+                                    frappe.show_alert({
+                                        message: __("Nutritional Profile {0} created successfully.", [r.message]),
+                                        indicator: "green"
+                                    });
+                                    frappe.set_route("Form", "Nutritional Profile", r.message);
+                                }
+                            }
+                        });
+                    }
+                );
+            }, __("Nutritional"));
+        }
+
         if (frm.doc.nutritional_snapshot_locked) {
             frm.dashboard.set_headline_alert(
                 __("Nutritional values are locked (BOM submitted)."),
