@@ -42,8 +42,10 @@ def get_kg_conversion_factor(item_code, item_doctype):
     if stock_uom.lower() == "kg":
         return 1.0
     for u in doc.get("uoms", []):
-        if (u.uom or "").lower() == "kg":
-            return 1.0 / flt(u.conversion_factor) if flt(u.conversion_factor) else 0.0
+        uom_name = getattr(u, "uom", None) or (u.get("uom") if isinstance(u, dict) else "")
+        conv_factor = flt(getattr(u, "conversion_factor", None) or (u.get("conversion_factor") if isinstance(u, dict) else 0))
+        if (uom_name or "").lower() == "kg":
+            return 1.0 / conv_factor if conv_factor else 0.0
             
     # Fallback to static UOM translation if no database conversion is configured
     static_factor = get_static_kg_factor(stock_uom)
@@ -167,13 +169,19 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
             continue
 
         if npd_item_code and frappe.db.exists("NPD Item", npd_item_code):
-            item_flag = frappe.db.get_value("NPD Item", npd_item_code, "npdi_include_in_nutrient_calc")
-            if item_flag is not None and not flt(item_flag):
-                continue
+            try:
+                item_flag = frappe.db.get_value("NPD Item", npd_item_code, "npdi_include_in_nutrient_calc")
+                if item_flag is not None and not flt(item_flag):
+                    continue
+            except Exception:
+                pass
         elif erpnext_item_code and frappe.db.exists("Item", erpnext_item_code):
-            item_flag = frappe.db.get_value("Item", erpnext_item_code, "npdi_include_in_nutrient_calc")
-            if item_flag is not None and not flt(item_flag):
-                continue
+            try:
+                item_flag = frappe.db.get_value("Item", erpnext_item_code, "npdi_include_in_nutrient_calc")
+                if item_flag is not None and not flt(item_flag):
+                    continue
+            except Exception:
+                pass
 
         ref_g = flt(profile.get("reference_quantity_g") or 100.0)
         
@@ -183,6 +191,8 @@ def rollup_nutrition(items, item_doctype_key="item_doctype", default_item_doctyp
             )
             
         ref_kg = ref_g / 1000.0
+        if ref_kg <= 0:
+            ref_kg = 0.1
 
         # Use stock_qty and explicit Kg conversion multiplier
         stock_qty = flt(_row_attr(item, "stock_qty"))
