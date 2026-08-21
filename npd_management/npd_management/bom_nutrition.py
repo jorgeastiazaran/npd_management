@@ -140,3 +140,30 @@ def calculate_nutrition_for_doc(doc_json):
         "totals": totals,
         "warnings": warnings
     }
+
+
+@frappe.whitelist()
+def create_nutritional_profile_from_bom(bom_name):
+    """Create a new Nutritional Profile from a standard BOM's calculated nutrition."""
+    bom = frappe.get_doc("BOM", bom_name)
+    if not bom.item:
+        frappe.throw("Please specify an Item for this BOM first.")
+
+    from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import (
+        NUTRITIONAL_FIELDS,
+    )
+
+    doc = frappe.new_doc("Nutritional Profile")
+    doc.reference_doctype = "Item"
+    doc.reference_name = bom.item
+    doc.item_name = bom.item_name or frappe.db.get_value("Item", bom.item, "item_name") or bom.item
+    doc.is_default = 0
+    doc.reference_quantity_g = flt(bom.get("npdi_reference_quantity_g") or 100.0)
+    doc.include_in_nutrient_calc = 1
+
+    for field in NUTRITIONAL_FIELDS:
+        if hasattr(bom, field):
+            setattr(doc, field, flt(getattr(bom, field, 0)))
+
+    doc.insert()
+    return doc.name

@@ -190,6 +190,34 @@ class NPDBOM(Document):
     def save_kg_conversions(self, conversions):
         return save_kg_conversions(conversions)
 
+    @frappe.whitelist()
+    def create_nutritional_profile(self):
+        """
+        Creates a new Nutritional Profile for the BOM header item
+        using the calculated nutritional values on this BOM.
+        """
+        if not self.item:
+            frappe.throw("Please specify an Item for this BOM first.")
+
+        from npd_management.npd_management.doctype.nutritional_profile.nutritional_profile import (
+            NUTRITIONAL_FIELDS,
+        )
+
+        doc = frappe.new_doc("Nutritional Profile")
+        doc.reference_doctype = self.item_doctype or getattr(self, "default_item_doctype", "NPD Item")
+        doc.reference_name = self.item
+        doc.item_name = self.item_name or frappe.db.get_value(doc.reference_doctype, self.item, "item_name") or self.item
+        doc.is_default = 0
+        doc.reference_quantity_g = flt(self.get("npdi_reference_quantity_g") or 100.0)
+        doc.include_in_nutrient_calc = 1
+
+        for field in NUTRITIONAL_FIELDS:
+            if hasattr(self, field):
+                setattr(doc, field, flt(getattr(self, field, 0)))
+
+        doc.insert()
+        return doc.name
+
     def on_submit(self):
         """
         On NPD BOM submission: lock referenced profiles and freeze the snapshot.
