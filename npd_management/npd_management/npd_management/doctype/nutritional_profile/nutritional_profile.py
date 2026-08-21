@@ -74,7 +74,7 @@ def get_active_profile(npd_item=None, item_code=None):
 	else:
 		return None
 
-	names = frappe.db.get_list("Nutritional Profile", filters=filters, pluck="name")
-	if names:
-		return frappe.get_doc("Nutritional Profile", names[0]).as_dict()
+	profile_name = frappe.db.get_value("Nutritional Profile", filters, "name")
+	if profile_name:
+		return frappe.get_cached_doc("Nutritional Profile", profile_name).as_dict()
 	return None
