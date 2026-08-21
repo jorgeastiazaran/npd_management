@@ -20,9 +20,9 @@ frappe.ui.form.on("NPD BOM", {
                 frappe.confirm(
                     __("Create a new Nutritional Profile for <b>{0}</b> using the calculated values from this BOM?", [frm.doc.item]),
                     function() {
-                        frm.call({
-                            method: "create_nutritional_profile",
-                            doc: frm.doc,
+                        frappe.call({
+                            method: "npd_management.npd_management.doctype.npd_bom.npd_bom.create_nutritional_profile",
+                            args: { bom_name: frm.doc.name },
                             freeze: true,
                             freeze_message: __("Creating Nutritional Profile..."),
                             callback: function(r) {
